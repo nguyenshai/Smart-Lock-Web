@@ -1,1 +1,77 @@
-<h1>Hello Smart Lock</h1>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hệ thống cửa đa chiều HGM</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+ 
+<div class="page">
+ 
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">HGM</span>
+      <span class="brand-name">Hệ thống cửa đa chiều</span>
+    </div>
+    <div class="conn" id="connIndicator">
+      <span class="conn-dot" id="connDot"></span>
+      <span id="connLabel">Đang kết nối…</span>
+    </div>
+  </header>
+ 
+  <main class="grid">
+ 
+    <section class="card card-status">
+      <div class="card-label">Trạng thái cửa</div>
+      <div class="status-row">
+        <span class="status-badge" id="stateBadge">—</span>
+        <span class="status-meta" id="stateMeta">Chưa có dữ liệu</span>
+      </div>
+      <div class="status-detail" id="stateDetail">
+        <div><span class="detail-key">Phương thức</span><span class="detail-val" id="methodVal">—</span></div>
+        <div><span class="detail-key">Người dùng</span><span class="detail-val" id="userVal">—</span></div>
+        <div><span class="detail-key">Cập nhật lúc</span><span class="detail-val" id="timeVal">—</span></div>
+      </div>
+    </section>
+ 
+    <section class="card card-controls">
+      <div class="card-label">Điều khiển từ xa</div>
+      <button class="btn btn-primary" id="unlockBtn">
+        Mở cửa từ xa
+      </button>
+ 
+      <div class="lockdown-row">
+        <div>
+          <div class="lockdown-title">Chế độ khóa chết</div>
+          <div class="lockdown-desc">Chỉ cho phép mở bằng vân tay</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="lockdownToggle">
+          <span class="switch-track"></span>
+        </label>
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </section>
+ 
+    <section class="card card-history">
+      <div class="card-label">Lịch sử ra vào</div>
+      <table class="history-table">
+        <thead>
+          <tr><th>Thời gian</th><th>Người dùng</th><th>Phương thức</th></tr>
+        </thead>
+        <tbody id="historyBody">
+          <tr><td colspan="3" class="empty-row">Chưa có lịch sử</td></tr>
+        </tbody>
+      </table>
+    </section>
+ 
+  </main>
+</div>
+ 
+<script src="app.js"></script>
+</body>
+</html>
