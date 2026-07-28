@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — HGM</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-brand">HGM</div>
+    <div class="auth-title">Smart Lock login</div>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" required autocomplete="current-password">
+      </div>
+      <div class="auth-msg" id="msg"></div>
+      <button type="submit" class="btn btn-primary" id="submitBtn">Login</button>
+    </form>
+
+    <div class="auth-links">
+      <a href="register.html">Create account</a>
+      <a href="forgot-password.html">Forgot password?</a>
+    </div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("submitBtn");
+  msg.textContent = "";
+  msg.className = "auth-msg";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(API_BASE + "/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: document.getElementById("username").value.trim(),
+        password: document.getElementById("password").value,
+      }),
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) {
+      msg.textContent = data.error || "Login failed";
+      msg.className = "auth-msg error";
+      return;
+    }
+
+    setSession(data.token, data.user);
+    window.location.href = "index.html";
+  } catch (err) {
+    msg.textContent = "Could not connect to Node-RED (" + API_BASE + ")";
+    msg.className = "auth-msg error";
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

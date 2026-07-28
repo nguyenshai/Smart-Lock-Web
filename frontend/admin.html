@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — HGM</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">HGM</span>
+      <span class="brand-name">Account admin</span>
+    </div>
+    <div class="navbar">
+      <span class="nav-user" id="navUser"></span>
+      <a href="index.html" class="nav-link">Back to dashboard</a>
+      <button class="btn btn-ghost" id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <main class="admin-layout">
+
+    <section class="card">
+      <div class="card-label">Account list</div>
+      <ul class="user-list" id="userList">
+        <li class="empty-row">Loading…</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <div class="card-label" id="credLabel">Select an account</div>
+
+      <form class="cred-form" id="credForm" style="display:none">
+        <div class="field">
+          <label for="credType">Type</label>
+          <select id="credType">
+            <option value="fingerprint">Fingerprint</option>
+            <option value="rfid">RFID card</option>
+            <option value="ble">BLE</option>
+            <option value="pin">PIN</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="credValue">Value</label>
+          <input type="text" id="credValue" placeholder="VD: 04A3B2C1" required>
+        </div>
+        <div class="field">
+          <label for="credLabelInput">Note</label>
+          <input type="text" id="credLabelInput" placeholder="Ex: Right index">
+        </div>
+        <button type="submit" class="btn btn-primary btn-small">Add</button>
+      </form>
+
+      <table class="history-table" id="credTable" style="display:none">
+        <thead>
+          <tr><th>Type</th><th>Value</th><th>Note</th><th></th></tr>
+        </thead>
+        <tbody id="credBody"></tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<script src="auth.js"></script>
+<script>
+requireAdmin();
+
+const currentUser = getUser();
+document.getElementById("navUser").textContent = currentUser.username + " (admin)";
+document.getElementById("logoutBtn").addEventListener("click", logout);
+
+const userList = document.getElementById("userList");
+const credLabel = document.getElementById("credLabel");
+const credForm = document.getElementById("credForm");
+const credTable = document.getElementById("credTable");
+const credBody = document.getElementById("credBody");
+
+let selectedUserId = null;
+
+const typeLabel = {
+  fingerprint: "Fingerprint",
+  rfid: "RFID",
+  ble: "BLE",
+  pin: "PIN",
+};
+
+async function loadUsers() {
+  try {
+    const res = await apiFetch("/api/users");
+    const users = await res.json();
+    if (!Array.isArray(users) || users.length === 0) {
+      userList.innerHTML = '<li class="empty-row">No accounts</li>';
+      return;
+    }
+    userList.innerHTML = users.map((u) => `
+      <li data-id="${u.id}">
+        ${u.username} <span style="color:var(--text-muted)">· ${u.role}</span>
+      </li>
+    `).join("");
+
+    userList.querySelectorAll("li[data-id]").forEach((li) => {
+      li.addEventListener("click", () => selectUser(li, parseInt(li.dataset.id), li.textContent.trim()));
+    });
+  } catch (err) {
+    userList.innerHTML = '<li class="empty-row">Could not load the list</li>';
+  }
+}
+
+function selectUser(li, userId, label) {
+  userList.querySelectorAll("li").forEach((el) => el.classList.remove("active"));
+  li.classList.add("active");
+  selectedUserId = userId;
+  credLabel.textContent = "Credentials for: " + label;
+  credForm.style.display = "grid";
+  credTable.style.display = "table";
+  loadCredentials();
+}
+
+async function loadCredentials() {
+  if (!selectedUserId) return;
+  try {
+    const res = await apiFetch(`/api/users/${selectedUserId}/credentials`);
+    const creds = await res.json();
+    if (!Array.isArray(creds) || creds.length === 0) {
+      credBody.innerHTML = '<tr><td colspan="4" class="empty-row">No credentials</td></tr>';
+      return;
+    }
+    credBody.innerHTML = creds.map((c) => `
+      <tr>
+        <td>${typeLabel[c.type] || c.type}</td>
+        <td>${c.credential_value}</td>
+        <td>${c.label || "—"}</td>
+        <td><button class="btn btn-danger btn-small" data-cred-id="${c.id}">Delete</button></td>
+      </tr>
+    `).join("");
+
+    credBody.querySelectorAll("button[data-cred-id]").forEach((btn) => {
+      btn.addEventListener("click", () => deleteCredential(btn.dataset.credId));
+    });
+  } catch (err) {
+    credBody.innerHTML = '<tr><td colspan="4" class="empty-row">Could not load</td></tr>';
+  }
+}
+
+credForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!selectedUserId) return;
+
+  try {
+    await apiFetch(`/api/users/${selectedUserId}/credentials`, {
+      method: "POST",
+      body: JSON.stringify({
+        type: document.getElementById("credType").value,
+        value: document.getElementById("credValue").value.trim(),
+        label: document.getElementById("credLabelInput").value.trim(),
+      }),
+    });
+    document.getElementById("credValue").value = "";
+    document.getElementById("credLabelInput").value = "";
+    loadCredentials();
+  } catch (err) {
+    alert("Could not add. Check Node-RED connection");
+  }
+});
+
+async function deleteCredential(credId) {
+  if (!confirm("Delete this credential?")) return;
+  try {
+    await apiFetch(`/api/credentials/${credId}`, { method: "DELETE" });
+    loadCredentials();
+  } catch (err) {
+    alert("Could not delete. Check Node-RED connection");
+  }
+}
+
+loadUsers();
+</script>
+</body>
+</html>

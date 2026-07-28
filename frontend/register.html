@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — HGM</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-brand">HGM</div>
+    <div class="auth-title">Create account</div>
+
+    <form id="registerForm">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="password">Password (min 6 chars)</label>
+        <input type="password" id="password" required minlength="6" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label for="confirm">Confirm password</label>
+        <input type="password" id="confirm" required minlength="6" autocomplete="new-password">
+      </div>
+      <div class="auth-msg" id="msg"></div>
+      <button type="submit" class="btn btn-primary" id="submitBtn">Register</button>
+    </form>
+
+    <div class="auth-links">
+      <a href="login.html">Have an account? Login</a>
+      <span></span>
+    </div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("submitBtn");
+  msg.textContent = "";
+  msg.className = "auth-msg";
+
+  const password = document.getElementById("password").value;
+  const confirm = document.getElementById("confirm").value;
+  if (password !== confirm) {
+    msg.textContent = "Passwords do not match";
+    msg.className = "auth-msg error";
+    return;
+  }
+
+  btn.disabled = true;
+  try {
+    const res = await fetch(API_BASE + "/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: document.getElementById("username").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        password: password,
+      }),
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) {
+      msg.textContent = data.error || "Registration failed";
+      msg.className = "auth-msg error";
+      return;
+    }
+
+    msg.textContent = "Success! Redirecting to login…";
+    msg.className = "auth-msg success";
+    setTimeout(() => (window.location.href = "login.html"), 1200);
+  } catch (err) {
+    msg.textContent = "Could not connect to Node-RED (" + API_BASE + ")";
+    msg.className = "auth-msg error";
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
