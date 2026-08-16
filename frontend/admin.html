@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — HGM</title>
+<title>Quản trị — HGM</title>
 <link rel="stylesheet" href="style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -15,51 +15,51 @@
   <header class="topbar">
     <div class="brand">
       <span class="brand-mark">HGM</span>
-      <span class="brand-name">Account admin</span>
+      <span class="brand-name">Quản lý tài khoản</span>
     </div>
     <div class="navbar">
       <span class="nav-user" id="navUser"></span>
-      <a href="index.html" class="nav-link">Back to dashboard</a>
-      <button class="btn btn-ghost" id="logoutBtn">Logout</button>
+      <a href="index.html" class="nav-link">Về dashboard</a>
+      <button class="btn btn-ghost" id="logoutBtn">Đăng xuất</button>
     </div>
   </header>
 
   <main class="admin-layout">
 
     <section class="card">
-      <div class="card-label">Account list</div>
+      <div class="card-label">Danh sách tài khoản</div>
       <ul class="user-list" id="userList">
-        <li class="empty-row">Loading…</li>
+        <li class="empty-row">Đang tải…</li>
       </ul>
     </section>
 
     <section class="card">
-      <div class="card-label" id="credLabel">Select an account</div>
+      <div class="card-label" id="credLabel">Chọn một tài khoản bên trái</div>
 
       <form class="cred-form" id="credForm" style="display:none">
         <div class="field">
-          <label for="credType">Type</label>
+          <label for="credType">Loại</label>
           <select id="credType">
-            <option value="fingerprint">Fingerprint</option>
-            <option value="rfid">RFID card</option>
-            <option value="ble">BLE</option>
-            <option value="pin">PIN</option>
+            <option value="fingerprint">Vân tay</option>
+            <option value="rfid">Thẻ RFID</option>
+            <option value="ble">BLE (MAC điện thoại)</option>
+            <option value="pin">Mã PIN</option>
           </select>
         </div>
         <div class="field">
-          <label for="credValue">Value</label>
+          <label for="credValue">Giá trị</label>
           <input type="text" id="credValue" placeholder="VD: 04A3B2C1" required>
         </div>
         <div class="field">
-          <label for="credLabelInput">Note</label>
-          <input type="text" id="credLabelInput" placeholder="Ex: Right index">
+          <label for="credLabelInput">Ghi chú</label>
+          <input type="text" id="credLabelInput" placeholder="VD: Ngón trỏ phải">
         </div>
-        <button type="submit" class="btn btn-primary btn-small">Add</button>
+        <button type="submit" class="btn btn-primary btn-small">Thêm</button>
       </form>
 
       <table class="history-table" id="credTable" style="display:none">
         <thead>
-          <tr><th>Type</th><th>Value</th><th>Note</th><th></th></tr>
+          <tr><th>Loại</th><th>Giá trị</th><th>Ghi chú</th><th></th></tr>
         </thead>
         <tbody id="credBody"></tbody>
       </table>
@@ -85,10 +85,10 @@ const credBody = document.getElementById("credBody");
 let selectedUserId = null;
 
 const typeLabel = {
-  fingerprint: "Fingerprint",
-  rfid: "RFID",
+  fingerprint: "Vân tay",
+  rfid: "Thẻ RFID",
   ble: "BLE",
-  pin: "PIN",
+  pin: "Mã PIN",
 };
 
 async function loadUsers() {
@@ -96,7 +96,7 @@ async function loadUsers() {
     const res = await apiFetch("/api/users");
     const users = await res.json();
     if (!Array.isArray(users) || users.length === 0) {
-      userList.innerHTML = '<li class="empty-row">No accounts</li>';
+      userList.innerHTML = '<li class="empty-row">Chưa có tài khoản</li>';
       return;
     }
     userList.innerHTML = users.map((u) => `
@@ -106,10 +106,12 @@ async function loadUsers() {
     `).join("");
 
     userList.querySelectorAll("li[data-id]").forEach((li) => {
-      li.addEventListener("click", () => selectUser(li, parseInt(li.dataset.id), li.textContent.trim()));
+      // Firebase dung ID dang chuoi (VD: -OExxxxxxxxx) - KHONG duoc parseInt(),
+      // parseInt se pha vong id nay thanh NaN vi no bat dau bang dau "-" roi toi chu cai.
+      li.addEventListener("click", () => selectUser(li, li.dataset.id, li.textContent.trim()));
     });
   } catch (err) {
-    userList.innerHTML = '<li class="empty-row">Could not load the list</li>';
+    userList.innerHTML = '<li class="empty-row">Không tải được danh sách</li>';
   }
 }
 
@@ -117,7 +119,7 @@ function selectUser(li, userId, label) {
   userList.querySelectorAll("li").forEach((el) => el.classList.remove("active"));
   li.classList.add("active");
   selectedUserId = userId;
-  credLabel.textContent = "Credentials for: " + label;
+  credLabel.textContent = "Thông tin xác thực của: " + label;
   credForm.style.display = "grid";
   credTable.style.display = "table";
   loadCredentials();
@@ -129,7 +131,7 @@ async function loadCredentials() {
     const res = await apiFetch(`/api/users/${selectedUserId}/credentials`);
     const creds = await res.json();
     if (!Array.isArray(creds) || creds.length === 0) {
-      credBody.innerHTML = '<tr><td colspan="4" class="empty-row">No credentials</td></tr>';
+      credBody.innerHTML = '<tr><td colspan="4" class="empty-row">Chưa có thông tin xác thực nào</td></tr>';
       return;
     }
     credBody.innerHTML = creds.map((c) => `
@@ -137,7 +139,7 @@ async function loadCredentials() {
         <td>${typeLabel[c.type] || c.type}</td>
         <td>${c.credential_value}</td>
         <td>${c.label || "—"}</td>
-        <td><button class="btn btn-danger btn-small" data-cred-id="${c.id}">Delete</button></td>
+        <td><button class="btn btn-danger btn-small" data-cred-id="${c.id}">Xóa</button></td>
       </tr>
     `).join("");
 
@@ -145,7 +147,7 @@ async function loadCredentials() {
       btn.addEventListener("click", () => deleteCredential(btn.dataset.credId));
     });
   } catch (err) {
-    credBody.innerHTML = '<tr><td colspan="4" class="empty-row">Could not load</td></tr>';
+    credBody.innerHTML = '<tr><td colspan="4" class="empty-row">Không tải được</td></tr>';
   }
 }
 
@@ -154,7 +156,7 @@ credForm.addEventListener("submit", async (e) => {
   if (!selectedUserId) return;
 
   try {
-    await apiFetch(`/api/users/${selectedUserId}/credentials`, {
+    const res = await apiFetch(`/api/users/${selectedUserId}/credentials`, {
       method: "POST",
       body: JSON.stringify({
         type: document.getElementById("credType").value,
@@ -162,21 +164,28 @@ credForm.addEventListener("submit", async (e) => {
         label: document.getElementById("credLabelInput").value.trim(),
       }),
     });
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) {
+      alert(data.error || "Không thêm được (server trả lỗi, kiểm tra tab Debug của Node-RED)");
+      return;
+    }
+
     document.getElementById("credValue").value = "";
     document.getElementById("credLabelInput").value = "";
     loadCredentials();
   } catch (err) {
-    alert("Could not add. Check Node-RED connection");
+    alert("Không gọi được API, kiểm tra Node-RED có đang chạy và CORS đã bật chưa");
   }
 });
 
 async function deleteCredential(credId) {
-  if (!confirm("Delete this credential?")) return;
+  if (!confirm("Xóa thông tin xác thực này?")) return;
   try {
     await apiFetch(`/api/credentials/${credId}`, { method: "DELETE" });
     loadCredentials();
   } catch (err) {
-    alert("Could not delete. Check Node-RED connection");
+    alert("Không xóa được, kiểm tra kết nối Node-RED");
   }
 }
 

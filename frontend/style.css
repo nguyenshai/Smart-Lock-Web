@@ -169,6 +169,23 @@ body {
   color: #06251E;
 }
 
+.btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-row .btn {
+  flex: 1;
+}
+
+.btn-secondary {
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover { border-color: var(--amber); color: var(--amber); }
+
 .lockdown-row {
   display: flex;
   align-items: center;

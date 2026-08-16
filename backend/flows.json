@@ -2,14 +2,14 @@
   {
     "id": "tab_hgm",
     "type": "tab",
-    "label": "Smart Lock HGM (local)",
+    "label": "Hệ Thống Khóa Cửa HGM (Firebase)",
     "disabled": false,
-    "info": "Chay local: Node-RED + Mosquitto + SQLite. Khong can VPS."
+    "info": "Chay local: Node-RED + Mosquitto + Firebase Realtime Database. Frontend chi noi chuyen voi Node-RED."
   },
   {
     "id": "broker_local",
     "type": "mqtt-broker",
-    "name": "Local Mosquitto",
+    "name": "Mosquitto (máy mình)",
     "broker": "localhost",
     "port": "1883",
     "clientid": "",
@@ -18,13 +18,12 @@
     "keepalive": "60",
     "cleansession": true
   },
-
   {
     "id": "cmt_init",
     "type": "comment",
     "z": "tab_hgm",
-    "name": "1. Khoi tao database SQLite (chay 1 lan khi deploy/start)",
-    "x": 200,
+    "name": "1. Kết nối Firebase + tạo tài khoản admin đầu tiên",
+    "x": 260,
     "y": 40,
     "wires": []
   },
@@ -32,33 +31,42 @@
     "id": "inject_init",
     "type": "inject",
     "z": "tab_hgm",
-    "name": "On deploy/start",
-    "props": [{ "p": "payload" }],
+    "name": "Khi khởi động",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
     "payloadType": "date",
     "once": true,
     "onceDelay": 0.1,
     "x": 140,
     "y": 80,
-    "wires": [["fn_init_db"]]
+    "wires": [
+      [
+        "fn_init_db"
+      ]
+    ]
   },
   {
     "id": "fn_init_db",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Tao bang + seed admin",
-    "func": "const Database = global.get('Database');\nconst db = new Database('hgm_database.db');\ndb.pragma('journal_mode = WAL');\n\ndb.exec(`\nCREATE TABLE IF NOT EXISTS users (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  username TEXT UNIQUE NOT NULL,\n  email TEXT UNIQUE NOT NULL,\n  password_hash TEXT NOT NULL,\n  password_salt TEXT NOT NULL,\n  role TEXT NOT NULL DEFAULT 'member',\n  created_at TEXT NOT NULL\n);\nCREATE TABLE IF NOT EXISTS credentials (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  user_id INTEGER NOT NULL,\n  type TEXT NOT NULL,\n  credential_value TEXT NOT NULL,\n  label TEXT,\n  created_at TEXT NOT NULL,\n  FOREIGN KEY(user_id) REFERENCES users(id)\n);\nCREATE TABLE IF NOT EXISTS access_logs (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  user_id INTEGER,\n  method TEXT NOT NULL,\n  time TEXT NOT NULL\n);\nCREATE TABLE IF NOT EXISTS sessions (\n  token TEXT PRIMARY KEY,\n  user_id INTEGER NOT NULL,\n  expires_at TEXT NOT NULL\n);\nCREATE TABLE IF NOT EXISTS password_resets (\n  token TEXT PRIMARY KEY,\n  user_id INTEGER NOT NULL,\n  expires_at TEXT NOT NULL\n);\n`);\n\nglobal.set('db', db);\n\nconst existing = db.prepare('SELECT COUNT(*) AS c FROM users').get();\nif (existing.c === 0) {\n    const crypto = global.get('crypto');\n    const salt = crypto.randomBytes(16).toString('hex');\n    const hash = crypto.scryptSync('admin123', salt, 64).toString('hex');\n    db.prepare('INSERT INTO users (username, email, password_hash, password_salt, role, created_at) VALUES (?,?,?,?,?,?)')\n      .run('admin', 'admin@hgm.local', hash, salt, 'admin', new Date().toISOString());\n    node.warn('Da tao tai khoan admin mac dinh: admin / admin123 - hay doi mat khau ngay sau khi test!');\n}\n\nglobal.set('doorStatus', {\n    state: 'locked',\n    method: null,\n    user: null,\n    lockdown: false,\n    updatedAt: new Date().toISOString()\n});\n\nreturn null;",
+    "name": "Kết nối Firebase + tạo admin",
+    "func": "const firebaseApp = global.get('firebaseApp');\nconst firebaseDatabase = global.get('firebaseDatabase');\nconst crypto = global.get('crypto');\nconst serviceAccount = global.get('serviceAccount');\n\nif (!firebaseApp || typeof firebaseApp.initializeApp !== 'function') {\n    node.error('global.get(\\\"firebaseApp\\\") không hợp lệ (kiểu=' + typeof firebaseApp + '). Kiểm tra dòng firebaseApp: require(\\'firebase-admin/app\\') trong settings.js, và nhớ restart Node-RED chưa.');\n    return null;\n}\nif (!firebaseDatabase || typeof firebaseDatabase.getDatabase !== 'function') {\n    node.error('global.get(\\\"firebaseDatabase\\\") không hợp lệ. Kiểm tra dòng firebaseDatabase: require(\\'firebase-admin/database\\') trong settings.js.');\n    return null;\n}\nif (!crypto || typeof crypto.randomBytes !== 'function') {\n    node.error('global.get(\\\"crypto\\\") không hợp lệ. Kiểm tra dòng crypto: require(\\'crypto\\') trong settings.js.');\n    return null;\n}\nif (!serviceAccount || typeof serviceAccount !== 'object') {\n    node.error('global.get(\\\"serviceAccount\\\") không hợp lệ (kiểu=' + typeof serviceAccount + '). Kiểm tra dòng serviceAccount: require(...) trong settings.js có đúng đường dẫn file serviceAccountKey.json không.');\n    return null;\n}\n\nlet db = global.get('db');\n\nif (!db) {\n    const { initializeApp, cert, getApps } = firebaseApp;\n    const { getDatabase } = firebaseDatabase;\n\n    if (getApps().length === 0) {\n        try {\n            initializeApp({\n                credential: cert(serviceAccount),\n                databaseURL: 'https://YOUR_PROJECT_ID-default-rtdb.asia-southeast1.firebasedatabase.app'\n            });\n        } catch (err) {\n            node.error('initializeApp thất bại - kiểm tra lại databaseURL và nội dung serviceAccountKey.json. Lỗi gốc: ' + err.message);\n            return null;\n        }\n    }\n\n    try {\n        db = getDatabase();\n    } catch (err) {\n        node.error('getDatabase() thất bại - kiểm tra lại databaseURL. Lỗi gốc: ' + err.message);\n        return null;\n    }\n    global.set('db', db);\n}\n\ntry {\n    const usernameSnap = await db.ref('users').orderByChild('username').equalTo('admin').once('value');\n    if (!usernameSnap.exists()) {\n        const salt = crypto.randomBytes(16).toString('hex');\n        const hash = crypto.scryptSync('admin123', salt, 64).toString('hex');\n\n        const newUserRef = db.ref('users').push();\n        await newUserRef.set({\n            username: 'admin',\n            email: 'admin@hgm.local',\n            password_hash: hash,\n            password_salt: salt,\n            role: 'admin',\n            created_at: new Date().toISOString()\n        });\n        node.warn('Đã tạo tài khoản admin mặc định: admin / admin123 - nhớ đổi mật khẩu sau khi test xong nhé!');\n    }\n\n    const statusSnap = await db.ref('door_status').once('value');\n    if (!statusSnap.exists()) {\n        await db.ref('door_status').set({\n            state: 'locked',\n            method: null,\n            user: null,\n            lockdown: false,\n            updatedAt: new Date().toISOString()\n        });\n    }\n} catch (err) {\n    node.error('Kết nối được Firebase nhưng đọc/ghi thất bại - kiểm tra Realtime Database Rules và databaseURL. Lỗi gốc: ' + err.message);\n}\n\nreturn null;",
     "outputs": 1,
-    "x": 400,
+    "x": 430,
     "y": 80,
-    "wires": [[]]
+    "wires": [
+      []
+    ]
   },
-
   {
     "id": "cmt_verify",
     "type": "comment",
     "z": "tab_hgm",
-    "name": "2. ESP32 -> home/hgm/verify: tra database de cap quyen mo cua",
-    "x": 240,
+    "name": "2. ESP32 gửi mã lên → Node-RED tra Firebase → cho phép hay từ chối",
+    "x": 250,
     "y": 160,
     "wires": []
   },
@@ -66,31 +74,42 @@
     "id": "mqtt_in_verify",
     "type": "mqtt in",
     "z": "tab_hgm",
-    "name": "MQTT: verify",
+    "name": "ESP32 gửi mã quét lên",
     "topic": "home/hgm/verify",
     "qos": "1",
     "datatype": "json",
     "broker": "broker_local",
     "x": 150,
     "y": 200,
-    "wires": [["fn_verify"]]
+    "wires": [
+      [
+        "fn_verify"
+      ]
+    ]
   },
   {
     "id": "fn_verify",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Xac thuc qua database",
-    "func": "// Payload format\nconst db = global.get('db');\nconst body = msg.payload || {};\n\nconst cred = db.prepare('SELECT * FROM credentials WHERE type = ? AND credential_value = ?').get(body.type, body.value);\n\nif (!cred) {\n    const resultMsg = { payload: { cmd: 'DENY' } };\n    return [resultMsg, null];\n}\n\nconst user = db.prepare('SELECT * FROM users WHERE id = ?').get(cred.user_id);\nconst now = new Date().toISOString();\n\ndb.prepare('INSERT INTO access_logs (user_id, method, time) VALUES (?,?,?)').run(user.id, body.type, now);\n\nconst prevStatus = global.get('doorStatus') || {};\nglobal.set('doorStatus', {\n    state: 'unlocked',\n    method: body.type,\n    user: user.username,\n    lockdown: prevStatus.lockdown || false,\n    updatedAt: now\n});\n\nconst resultMsg = { payload: { cmd: 'GRANT' } };\nconst sheetsMsg = { payload: { time: now, user: user.username, method: body.type } };\nreturn [resultMsg, sheetsMsg];",
+    "name": "Kiểm tra vân tay/thẻ qua Firebase",
+    "func": "// msg.payload nhận vào dạng: { type: 'fingerprint'|'rfid'|'ble'|'pin', value: '...' }\nconst db = global.get('db');\nconst body = msg.payload || {};\nconst safeKey = (s) => String(s).replace(/[.#$\\[\\]\\/]/g, '_');\n\nnode.warn('[verify] nhận yêu cầu: type=' + body.type + ' value=' + body.value);\n\nconst lookupSnap = await db.ref(`credential_lookup/${body.type}/${safeKey(body.value)}`).once('value');\nif (!lookupSnap.exists()) {\n    node.warn('[verify] DENY - không tìm thấy credential_lookup/' + body.type + '/' + safeKey(body.value));\n    return [{ payload: { cmd: 'DENY' } }, null];\n}\n\nconst credId = lookupSnap.val();\nconst credSnap = await db.ref('credentials/' + credId).once('value');\nconst cred = credSnap.val();\nif (!cred) {\n    node.warn('[verify] DENY - lookup có nhưng credentials/' + credId + ' không tồn tại (dữ liệu bị lệch)');\n    return [{ payload: { cmd: 'DENY' } }, null];\n}\n\nconst userSnap = await db.ref('users/' + cred.user_id).once('value');\nconst user = userSnap.val();\nif (!user) {\n    node.warn('[verify] DENY - credential có nhưng user_id=' + cred.user_id + ' không tồn tại');\n    return [{ payload: { cmd: 'DENY' } }, null];\n}\n\nconst now = new Date().toISOString();\nawait db.ref('access_logs').push({\n    user_id: cred.user_id,\n    username: user.username,\n    method: body.type,\n    time: now\n});\n\nconst statusSnap = await db.ref('door_status').once('value');\nconst prevStatus = statusSnap.val() || {};\nawait db.ref('door_status').set({\n    state: 'unlocked',\n    method: body.type,\n    user: user.username,\n    lockdown: prevStatus.lockdown || false,\n    updatedAt: now\n});\n\nnode.warn('[verify] GRANT - mở cửa cho ' + user.username + ' bằng ' + body.type);\n\nconst resultMsg = { payload: { cmd: 'GRANT' } };\nconst sheetsMsg = { payload: { time: now, user: user.username, method: body.type } };\nreturn [resultMsg, sheetsMsg];",
     "outputs": 2,
     "x": 420,
     "y": 200,
-    "wires": [["mqtt_out_verify_result"], ["fn_prep_sheets"]]
+    "wires": [
+      [
+        "mqtt_out_verify_result"
+      ],
+      [
+        "fn_prep_sheets"
+      ]
+    ]
   },
   {
     "id": "mqtt_out_verify_result",
     "type": "mqtt out",
     "z": "tab_hgm",
-    "name": "MQTT: verify_result",
+    "name": "Trả kết quả cho ESP32",
     "topic": "home/hgm/verify_result",
     "qos": "1",
     "retain": "false",
@@ -103,18 +122,22 @@
     "id": "fn_prep_sheets",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Chuan bi dong Google Sheets",
+    "name": "Soạn dữ liệu gửi Google Sheets",
     "func": "msg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nreturn msg;",
     "outputs": 1,
     "x": 680,
     "y": 240,
-    "wires": [["http_req_sheets"]]
+    "wires": [
+      [
+        "http_req_sheets"
+      ]
+    ]
   },
   {
     "id": "http_req_sheets",
     "type": "http request",
     "z": "tab_hgm",
-    "name": "POST -> Google Sheets Web App",
+    "name": "Gửi lên Google Sheets",
     "method": "use",
     "ret": "txt",
     "paytoqs": "ignore",
@@ -123,14 +146,15 @@
     "persist": false,
     "x": 920,
     "y": 240,
-    "wires": [[]]
+    "wires": [
+      []
+    ]
   },
-
   {
     "id": "cmt_alert",
     "type": "comment",
     "z": "tab_hgm",
-    "name": "3. ESP32 -> home/hgm/alert (sai 3 lan / co canh bao) -> Telegram",
+    "name": "3. ESP32 báo động → gửi cảnh báo qua Telegram",
     "x": 250,
     "y": 300,
     "wires": []
@@ -139,31 +163,39 @@
     "id": "mqtt_in_alert",
     "type": "mqtt in",
     "z": "tab_hgm",
-    "name": "MQTT: alert",
+    "name": "ESP32 báo động",
     "topic": "home/hgm/alert",
     "qos": "1",
     "datatype": "json",
     "broker": "broker_local",
     "x": 145,
     "y": 340,
-    "wires": [["fn_format_telegram"]]
+    "wires": [
+      [
+        "fn_format_telegram"
+      ]
+    ]
   },
   {
     "id": "fn_format_telegram",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Chuan bi tin nhan Telegram",
-    "func": "const TELEGRAM_TOKEN = 'YOUR_BOT_TOKEN';\nconst CHAT_ID = 'YOUR_CHAT_ID';\n\nconst text = 'CANH BAO HGM: phat hien bat thuong tai cua (' + (msg.payload.reason || 'khong ro') + ') luc ' + new Date().toLocaleString('vi-VN');\n\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nmsg.url = 'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage';\nmsg.payload = { chat_id: CHAT_ID, text: text };\nreturn msg;",
+    "name": "Soạn tin nhắn Telegram",
+    "func": "const TELEGRAM_TOKEN = 'YOUR_BOT_TOKEN';\nconst CHAT_ID = 'YOUR_CHAT_ID';\n\nconst text = 'CẢNH BÁO HGM: phát hiện bất thường tại cửa (' + (msg.payload.reason || 'không rõ') + ') lúc ' + new Date().toLocaleString('vi-VN');\n\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nmsg.url = 'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage';\nmsg.payload = { chat_id: CHAT_ID, text: text };\nreturn msg;",
     "outputs": 1,
     "x": 420,
     "y": 340,
-    "wires": [["http_req_telegram"]]
+    "wires": [
+      [
+        "http_req_telegram"
+      ]
+    ]
   },
   {
     "id": "http_req_telegram",
     "type": "http request",
     "z": "tab_hgm",
-    "name": "POST -> Telegram Bot API",
+    "name": "Gửi cảnh báo Telegram",
     "method": "use",
     "ret": "txt",
     "paytoqs": "ignore",
@@ -172,14 +204,15 @@
     "persist": false,
     "x": 690,
     "y": 340,
-    "wires": [[]]
+    "wires": [
+      []
+    ]
   },
-
   {
     "id": "cmt_cmd_out",
     "type": "comment",
     "z": "tab_hgm",
-    "name": "4. Node-RED -> home/hgm/command (remote unlock / lockdown tu web)",
+    "name": "4. Node-RED gửi lệnh xuống ESP32 (mở / đóng / khóa chết)",
     "x": 230,
     "y": 400,
     "wires": []
@@ -188,7 +221,7 @@
     "id": "mqtt_out_cmd",
     "type": "mqtt out",
     "z": "tab_hgm",
-    "name": "MQTT: command",
+    "name": "Gửi lệnh xuống ESP32",
     "topic": "home/hgm/command",
     "qos": "1",
     "retain": "false",
@@ -197,13 +230,12 @@
     "y": 720,
     "wires": []
   },
-
   {
     "id": "cmt_auth_sub",
     "type": "comment",
     "z": "tab_hgm",
-    "name": "5. Subroutine dung chung: kiem tra session token (goi lai bang link call)",
-    "x": 260,
+    "name": "5. Hàm dùng chung: kiểm tra đã đăng nhập chưa",
+    "x": 290,
     "y": 460,
     "wires": []
   },
@@ -211,45 +243,51 @@
     "id": "linkin_auth",
     "type": "link in",
     "z": "tab_hgm",
-    "name": "Auth Check: in",
+    "name": "Kiểm tra đăng nhập: bắt đầu",
     "links": [],
     "x": 150,
     "y": 500,
-    "wires": [["fn_validate_session"]]
+    "wires": [
+      [
+        "fn_validate_session"
+      ]
+    ]
   },
   {
     "id": "fn_validate_session",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Kiem tra token trong bang sessions",
-    "func": "const db = global.get('db');\nconst authHeader = (msg.req && msg.req.headers['authorization']) || '';\nconst token = authHeader.replace('Bearer ', '').trim();\n\nmsg.authUser = null;\nmsg.authError = null;\n\nif (!token) {\n    msg.authError = 'Thieu token dang nhap';\n} else {\n    const session = db.prepare('SELECT * FROM sessions WHERE token = ?').get(token);\n    if (!session || new Date(session.expires_at) < new Date()) {\n        msg.authError = 'Token khong hop le hoac da het han';\n    } else {\n        msg.authUser = db.prepare('SELECT id, username, email, role FROM users WHERE id = ?').get(session.user_id);\n    }\n}\nreturn msg;",
+    "name": "Kiểm tra token đăng nhập",
+    "func": "const db = global.get('db');\nconst authHeader = (msg.req && msg.req.headers['authorization']) || '';\nconst token = authHeader.replace('Bearer ', '').trim();\n\nmsg.authUser = null;\nmsg.authError = null;\n\nif (!token) {\n    msg.authError = 'Thiếu token đăng nhập';\n    return msg;\n}\n\nconst sessionSnap = await db.ref('sessions/' + token).once('value');\nconst session = sessionSnap.val();\n\nif (!session || new Date(session.expires_at) < new Date()) {\n    msg.authError = 'Token không hợp lệ hoặc đã hết hạn';\n    return msg;\n}\n\nconst userSnap = await db.ref('users/' + session.user_id).once('value');\nconst user = userSnap.val();\n\nif (!user) {\n    msg.authError = 'Tài khoản không còn tồn tại';\n    return msg;\n}\n\nmsg.authUser = { id: session.user_id, username: user.username, email: user.email, role: user.role };\nreturn msg;",
     "outputs": 1,
-    "x": 400,
+    "x": 420,
     "y": 500,
-    "wires": [["linkout_auth"]]
+    "wires": [
+      [
+        "linkout_auth"
+      ]
+    ]
   },
   {
     "id": "linkout_auth",
     "type": "link out",
     "z": "tab_hgm",
-    "name": "Auth Check: out",
+    "name": "Kiểm tra đăng nhập: kết thúc",
     "mode": "return",
     "links": [],
-    "x": 620,
+    "x": 650,
     "y": 500,
     "wires": []
   },
-
   {
     "id": "cmt_auth_api",
     "type": "comment",
     "z": "tab_hgm",
-    "name": "6. API dang ky / dang nhap / dang xuat / quen mat khau",
+    "name": "6. API đăng ký / đăng nhập / đăng xuất / quên mật khẩu",
     "x": 220,
     "y": 580,
     "wires": []
   },
-
   {
     "id": "http_in_register",
     "type": "http in",
@@ -261,31 +299,38 @@
     "swaggerDoc": "",
     "x": 170,
     "y": 620,
-    "wires": [["fn_register"]]
+    "wires": [
+      [
+        "fn_register"
+      ]
+    ]
   },
   {
     "id": "fn_register",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Xu ly dang ky",
-    "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst body = msg.payload || {};\n\nif (!body.username || !body.email || !body.password) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Thieu username/email/password' };\n    return msg;\n}\nif (body.password.length < 6) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Mat khau toi thieu 6 ky tu' };\n    return msg;\n}\n\nconst existing = db.prepare('SELECT id FROM users WHERE username = ? OR email = ?').get(body.username, body.email);\nif (existing) {\n    msg.statusCode = 409;\n    msg.payload = { ok: false, error: 'Username hoac email da ton tai' };\n    return msg;\n}\n\nconst salt = crypto.randomBytes(16).toString('hex');\nconst hash = crypto.scryptSync(body.password, salt, 64).toString('hex');\n\ndb.prepare('INSERT INTO users (username, email, password_hash, password_salt, role, created_at) VALUES (?,?,?,?,?,?)')\n  .run(body.username, body.email, hash, salt, 'member', new Date().toISOString());\n\nmsg.payload = { ok: true, message: 'Dang ky thanh cong, hay dang nhap' };\nreturn msg;",
+    "name": "Xử lý đăng ký",
+    "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst body = msg.payload || {};\n\nif (!body.username || !body.email || !body.password) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Thiếu username/email/password' };\n    return msg;\n}\nif (body.password.length < 6) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Mật khẩu tối thiểu 6 ký tự' };\n    return msg;\n}\n\nconst usernameSnap = await db.ref('users').orderByChild('username').equalTo(body.username).once('value');\nif (usernameSnap.exists()) {\n    msg.statusCode = 409;\n    msg.payload = { ok: false, error: 'Username đã tồn tại' };\n    return msg;\n}\nconst emailSnap = await db.ref('users').orderByChild('email').equalTo(body.email).once('value');\nif (emailSnap.exists()) {\n    msg.statusCode = 409;\n    msg.payload = { ok: false, error: 'Email đã tồn tại' };\n    return msg;\n}\n\nconst salt = crypto.randomBytes(16).toString('hex');\nconst hash = crypto.scryptSync(body.password, salt, 64).toString('hex');\n\nconst newUserRef = db.ref('users').push();\nawait newUserRef.set({\n    username: body.username,\n    email: body.email,\n    password_hash: hash,\n    password_salt: salt,\n    role: 'member',\n    created_at: new Date().toISOString()\n});\n\nmsg.payload = { ok: true, message: 'Đăng ký thành công, hãy đăng nhập' };\nreturn msg;",
     "outputs": 1,
     "x": 420,
     "y": 620,
-    "wires": [["http_resp_register"]]
+    "wires": [
+      [
+        "http_resp_register"
+      ]
+    ]
   },
   {
     "id": "http_resp_register",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 660,
     "y": 620,
     "wires": []
   },
-
   {
     "id": "http_in_login",
     "type": "http in",
@@ -297,31 +342,38 @@
     "swaggerDoc": "",
     "x": 160,
     "y": 660,
-    "wires": [["fn_login"]]
+    "wires": [
+      [
+        "fn_login"
+      ]
+    ]
   },
   {
     "id": "fn_login",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Xu ly dang nhap",
-    "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst body = msg.payload || {};\n\nconst user = db.prepare('SELECT * FROM users WHERE username = ?').get(body.username);\nif (!user) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: 'Sai username hoac mat khau' };\n    return msg;\n}\n\nconst hash = crypto.scryptSync(body.password || '', user.password_salt, 64).toString('hex');\nif (hash !== user.password_hash) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: 'Sai username hoac mat khau' };\n    return msg;\n}\n\nconst token = crypto.randomBytes(32).toString('hex');\nconst expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();\n\ndb.prepare('INSERT INTO sessions (token, user_id, expires_at) VALUES (?,?,?)').run(token, user.id, expires);\n\nmsg.payload = {\n    ok: true,\n    token: token,\n    user: { id: user.id, username: user.username, email: user.email, role: user.role }\n};\nreturn msg;",
+    "name": "Xử lý đăng nhập",
+    "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst body = msg.payload || {};\n\nconst snap = await db.ref('users').orderByChild('username').equalTo(body.username).once('value');\nif (!snap.exists()) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: 'Sai username hoặc mật khẩu' };\n    return msg;\n}\n\nlet userId, user;\nsnap.forEach((child) => { userId = child.key; user = child.val(); });\n\nconst hash = crypto.scryptSync(body.password || '', user.password_salt, 64).toString('hex');\nif (hash !== user.password_hash) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: 'Sai username hoặc mật khẩu' };\n    return msg;\n}\n\nconst token = crypto.randomBytes(32).toString('hex');\nconst expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();\n\nawait db.ref('sessions/' + token).set({ user_id: userId, expires_at: expires });\n\nmsg.payload = {\n    ok: true,\n    token: token,\n    user: { id: userId, username: user.username, email: user.email, role: user.role }\n};\nreturn msg;",
     "outputs": 1,
     "x": 410,
     "y": 660,
-    "wires": [["http_resp_login"]]
+    "wires": [
+      [
+        "http_resp_login"
+      ]
+    ]
   },
   {
     "id": "http_resp_login",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 650,
     "y": 660,
     "wires": []
   },
-
   {
     "id": "http_in_logout",
     "type": "http in",
@@ -333,31 +385,38 @@
     "swaggerDoc": "",
     "x": 165,
     "y": 700,
-    "wires": [["fn_logout"]]
+    "wires": [
+      [
+        "fn_logout"
+      ]
+    ]
   },
   {
     "id": "fn_logout",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Xu ly dang xuat",
-    "func": "const db = global.get('db');\nconst authHeader = (msg.req && msg.req.headers['authorization']) || '';\nconst token = authHeader.replace('Bearer ', '').trim();\nif (token) db.prepare('DELETE FROM sessions WHERE token = ?').run(token);\nmsg.payload = { ok: true };\nreturn msg;",
+    "name": "Xử lý đăng xuất",
+    "func": "const db = global.get('db');\nconst authHeader = (msg.req && msg.req.headers['authorization']) || '';\nconst token = authHeader.replace('Bearer ', '').trim();\nif (token) await db.ref('sessions/' + token).remove();\nmsg.payload = { ok: true };\nreturn msg;",
     "outputs": 1,
     "x": 415,
     "y": 700,
-    "wires": [["http_resp_logout"]]
+    "wires": [
+      [
+        "http_resp_logout"
+      ]
+    ]
   },
   {
     "id": "http_resp_logout",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 655,
     "y": 700,
     "wires": []
   },
-
   {
     "id": "http_in_forgot",
     "type": "http in",
@@ -369,31 +428,38 @@
     "swaggerDoc": "",
     "x": 185,
     "y": 740,
-    "wires": [["fn_forgot"]]
+    "wires": [
+      [
+        "fn_forgot"
+      ]
+    ]
   },
   {
     "id": "fn_forgot",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Xu ly quen mat khau",
-    "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst email = (msg.payload || {}).email;\n\nconst user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);\nif (user) {\n    const token = crypto.randomBytes(24).toString('hex');\n    const expires = new Date(Date.now() + 15 * 60 * 1000).toISOString();\n    db.prepare('INSERT INTO password_resets (token, user_id, expires_at) VALUES (?,?,?)').run(token, user.id, expires);\n    // Local/dev: chua noi SMTP that, nen in link ra log Node-RED de test.\n    // Khi trien khai that, thay bang node gui email that (vd: SendGrid, Gmail SMTP).\n    node.warn('[DEV] Link dat lai mat khau cho ' + email + ': reset-password.html?token=' + token);\n}\n\n// Luon tra ve cung 1 thong bao du email co ton tai hay khong, tranh lo thong tin tai khoan\nmsg.payload = { ok: true, message: 'Neu email ton tai trong he thong, huong dan dat lai mat khau da duoc gui' };\nreturn msg;",
+    "name": "Xử lý quên mật khẩu",
+    "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst email = (msg.payload || {}).email;\n\nconst snap = await db.ref('users').orderByChild('email').equalTo(email).once('value');\nif (snap.exists()) {\n    let userId;\n    snap.forEach((child) => { userId = child.key; });\n\n    const token = crypto.randomBytes(24).toString('hex');\n    const expires = new Date(Date.now() + 15 * 60 * 1000).toISOString();\n    await db.ref('password_resets/' + token).set({ user_id: userId, expires_at: expires });\n    // Local/dev: chưa nối SMTP thật, nên in link ra log Node-RED để test.\n    node.warn('[DEV] Link đặt lại mật khẩu cho ' + email + ': reset-password.html?token=' + token);\n}\n\nmsg.payload = { ok: true, message: 'Nếu email tồn tại trong hệ thống, hướng dẫn đặt lại mật khẩu đã được gửi' };\nreturn msg;",
     "outputs": 1,
     "x": 430,
     "y": 740,
-    "wires": [["http_resp_forgot"]]
+    "wires": [
+      [
+        "http_resp_forgot"
+      ]
+    ]
   },
   {
     "id": "http_resp_forgot",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 660,
     "y": 740,
     "wires": []
   },
-
   {
     "id": "http_in_reset",
     "type": "http in",
@@ -405,41 +471,47 @@
     "swaggerDoc": "",
     "x": 180,
     "y": 780,
-    "wires": [["fn_reset"]]
+    "wires": [
+      [
+        "fn_reset"
+      ]
+    ]
   },
   {
     "id": "fn_reset",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Xu ly dat lai mat khau",
-    "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst body = msg.payload || {};\n\nconst record = db.prepare('SELECT * FROM password_resets WHERE token = ?').get(body.token);\nif (!record || new Date(record.expires_at) < new Date()) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Token khong hop le hoac da het han' };\n    return msg;\n}\nif (!body.newPassword || body.newPassword.length < 6) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Mat khau moi toi thieu 6 ky tu' };\n    return msg;\n}\n\nconst salt = crypto.randomBytes(16).toString('hex');\nconst hash = crypto.scryptSync(body.newPassword, salt, 64).toString('hex');\ndb.prepare('UPDATE users SET password_hash = ?, password_salt = ? WHERE id = ?').run(hash, salt, record.user_id);\ndb.prepare('DELETE FROM password_resets WHERE token = ?').run(body.token);\ndb.prepare('DELETE FROM sessions WHERE user_id = ?').run(record.user_id);\n\nmsg.payload = { ok: true, message: 'Dat lai mat khau thanh cong, hay dang nhap lai' };\nreturn msg;",
+    "name": "Xử lý đặt lại mật khẩu",
+    "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst body = msg.payload || {};\n\nconst snap = await db.ref('password_resets/' + body.token).once('value');\nconst record = snap.val();\n\nif (!record || new Date(record.expires_at) < new Date()) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Token không hợp lệ hoặc đã hết hạn' };\n    return msg;\n}\nif (!body.newPassword || body.newPassword.length < 6) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Mật khẩu mới tối thiểu 6 ký tự' };\n    return msg;\n}\n\nconst salt = crypto.randomBytes(16).toString('hex');\nconst hash = crypto.scryptSync(body.newPassword, salt, 64).toString('hex');\n\nawait db.ref('users/' + record.user_id).update({ password_hash: hash, password_salt: salt });\nawait db.ref('password_resets/' + body.token).remove();\n\n// Đăng xuất tất cả session cũ của người này\nconst sessSnap = await db.ref('sessions').orderByChild('user_id').equalTo(record.user_id).once('value');\nconst updates = {};\nsessSnap.forEach((child) => { updates[child.key] = null; });\nif (Object.keys(updates).length) await db.ref('sessions').update(updates);\n\nmsg.payload = { ok: true, message: 'Đặt lại mật khẩu thành công, hãy đăng nhập lại' };\nreturn msg;",
     "outputs": 1,
     "x": 430,
     "y": 780,
-    "wires": [["http_resp_reset"]]
+    "wires": [
+      [
+        "http_resp_reset"
+      ]
+    ]
   },
   {
     "id": "http_resp_reset",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 660,
     "y": 780,
     "wires": []
   },
-
   {
     "id": "cmt_protected_api",
     "type": "comment",
     "z": "tab_hgm",
-    "name": "7. API can dang nhap: status / history / unlock / lockdown",
+    "name": "7. API cần đăng nhập: trạng thái / lịch sử / mở / đóng / khóa chết",
     "x": 210,
     "y": 860,
     "wires": []
   },
-
   {
     "id": "http_in_status",
     "type": "http in",
@@ -451,42 +523,55 @@
     "swaggerDoc": "",
     "x": 140,
     "y": 900,
-    "wires": [["linkcall_status"]]
+    "wires": [
+      [
+        "linkcall_status"
+      ]
+    ]
   },
   {
     "id": "linkcall_status",
     "type": "link call",
     "z": "tab_hgm",
-    "name": "Goi: Auth Check",
-    "links": ["linkin_auth"],
+    "name": "Gọi: kiểm tra đăng nhập",
+    "links": [
+      "linkin_auth"
+    ],
     "timeout": "30",
     "x": 370,
     "y": 900,
-    "wires": [["fn_status"]]
+    "wires": [
+      [
+        "fn_status"
+      ]
+    ]
   },
   {
     "id": "fn_status",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Tra ve trang thai cua",
-    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nmsg.payload = global.get('doorStatus') || {};\nreturn msg;",
+    "name": "Trả về trạng thái cửa",
+    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nconst db = global.get('db');\nconst snap = await db.ref('door_status').once('value');\nmsg.payload = snap.val() || {};\nreturn msg;",
     "outputs": 1,
     "x": 600,
     "y": 900,
-    "wires": [["http_resp_status"]]
+    "wires": [
+      [
+        "http_resp_status"
+      ]
+    ]
   },
   {
     "id": "http_resp_status",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 820,
     "y": 900,
     "wires": []
   },
-
   {
     "id": "http_in_history",
     "type": "http in",
@@ -498,42 +583,55 @@
     "swaggerDoc": "",
     "x": 145,
     "y": 940,
-    "wires": [["linkcall_history"]]
+    "wires": [
+      [
+        "linkcall_history"
+      ]
+    ]
   },
   {
     "id": "linkcall_history",
     "type": "link call",
     "z": "tab_hgm",
-    "name": "Goi: Auth Check",
-    "links": ["linkin_auth"],
+    "name": "Gọi: kiểm tra đăng nhập",
+    "links": [
+      "linkin_auth"
+    ],
     "timeout": "30",
     "x": 375,
     "y": 940,
-    "wires": [["fn_history"]]
+    "wires": [
+      [
+        "fn_history"
+      ]
+    ]
   },
   {
     "id": "fn_history",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Tra ve lich su ra vao",
-    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nconst db = global.get('db');\nconst limit = parseInt(msg.req.query.limit) || 20;\nconst rows = db.prepare(`\n    SELECT al.time AS time, al.method AS method, u.username AS user\n    FROM access_logs al\n    LEFT JOIN users u ON u.id = al.user_id\n    ORDER BY al.id DESC\n    LIMIT ?\n`).all(limit);\nmsg.payload = rows;\nreturn msg;",
+    "name": "Trả về lịch sử ra vào",
+    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nconst db = global.get('db');\nconst limit = parseInt(msg.req.query.limit) || 20;\n\n// access_logs dùng push key (theo thời gian) nên limitToLast lấy được N bản ghi gần nhất\nconst snap = await db.ref('access_logs').orderByKey().limitToLast(limit).once('value');\nconst rows = [];\nsnap.forEach((child) => {\n    const v = child.val();\n    rows.unshift({ time: v.time, user: v.username, method: v.method });\n});\nmsg.payload = rows;\nreturn msg;",
     "outputs": 1,
     "x": 610,
     "y": 940,
-    "wires": [["http_resp_history"]]
+    "wires": [
+      [
+        "http_resp_history"
+      ]
+    ]
   },
   {
     "id": "http_resp_history",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 830,
     "y": 940,
     "wires": []
   },
-
   {
     "id": "http_in_unlock",
     "type": "http in",
@@ -545,42 +643,58 @@
     "swaggerDoc": "",
     "x": 145,
     "y": 980,
-    "wires": [["linkcall_unlock"]]
+    "wires": [
+      [
+        "linkcall_unlock"
+      ]
+    ]
   },
   {
     "id": "linkcall_unlock",
     "type": "link call",
     "z": "tab_hgm",
-    "name": "Goi: Auth Check",
-    "links": ["linkin_auth"],
+    "name": "Gọi: kiểm tra đăng nhập",
+    "links": [
+      "linkin_auth"
+    ],
     "timeout": "30",
     "x": 375,
     "y": 980,
-    "wires": [["fn_unlock"]]
+    "wires": [
+      [
+        "fn_unlock"
+      ]
+    ]
   },
   {
     "id": "fn_unlock",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Mo cua tu xa + ghi log",
-    "func": "if (msg.authError) {\n    const errMsg = { statusCode: 401, payload: { ok: false, error: msg.authError }, res: msg.res };\n    return [null, errMsg];\n}\n\nconst db = global.get('db');\nconst now = new Date().toISOString();\ndb.prepare('INSERT INTO access_logs (user_id, method, time) VALUES (?,?,?)').run(msg.authUser.id, 'remote_web', now);\n\nconst prevStatus = global.get('doorStatus') || {};\nglobal.set('doorStatus', {\n    state: 'unlocked',\n    method: 'remote_web',\n    user: msg.authUser.username,\n    lockdown: prevStatus.lockdown || false,\n    updatedAt: now\n});\n\nconst cmdMsg = { payload: { cmd: 'UNLOCK' } };\nconst respMsg = { payload: { ok: true, message: 'Da gui lenh mo cua' }, res: msg.res };\nreturn [cmdMsg, respMsg];",
+    "name": "Mở cửa từ xa",
+    "func": "if (msg.authError) {\n    const errMsg = { statusCode: 401, payload: { ok: false, error: msg.authError }, res: msg.res };\n    return [null, errMsg];\n}\n\nconst db = global.get('db');\nconst now = new Date().toISOString();\n\nawait db.ref('access_logs').push({\n    user_id: msg.authUser.id,\n    username: msg.authUser.username,\n    method: 'remote_web',\n    time: now\n});\n\nconst statusSnap = await db.ref('door_status').once('value');\nconst prevStatus = statusSnap.val() || {};\nawait db.ref('door_status').set({\n    state: 'unlocked',\n    method: 'remote_web',\n    user: msg.authUser.username,\n    lockdown: prevStatus.lockdown || false,\n    updatedAt: now\n});\n\nconst cmdMsg = { payload: { cmd: 'UNLOCK' } };\nconst respMsg = { payload: { ok: true, message: 'Đã gửi lệnh mở cửa' }, res: msg.res };\nreturn [cmdMsg, respMsg];",
     "outputs": 2,
     "x": 610,
     "y": 980,
-    "wires": [["mqtt_out_cmd"], ["http_resp_unlock"]]
+    "wires": [
+      [
+        "mqtt_out_cmd"
+      ],
+      [
+        "http_resp_unlock"
+      ]
+    ]
   },
   {
     "id": "http_resp_unlock",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 830,
     "y": 1010,
     "wires": []
   },
-
   {
     "id": "http_in_lockdown",
     "type": "http in",
@@ -592,52 +706,67 @@
     "swaggerDoc": "",
     "x": 150,
     "y": 1020,
-    "wires": [["linkcall_lockdown"]]
+    "wires": [
+      [
+        "linkcall_lockdown"
+      ]
+    ]
   },
   {
     "id": "linkcall_lockdown",
     "type": "link call",
     "z": "tab_hgm",
-    "name": "Goi: Auth Check",
-    "links": ["linkin_auth"],
+    "name": "Gọi: kiểm tra đăng nhập",
+    "links": [
+      "linkin_auth"
+    ],
     "timeout": "30",
     "x": 380,
     "y": 1020,
-    "wires": [["fn_lockdown"]]
+    "wires": [
+      [
+        "fn_lockdown"
+      ]
+    ]
   },
   {
     "id": "fn_lockdown",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Bat/tat che do khoa chet",
-    "func": "if (msg.authError) {\n    const errMsg = { statusCode: 401, payload: { ok: false, error: msg.authError }, res: msg.res };\n    return [null, errMsg];\n}\n\nconst enable = !!(msg.payload && msg.payload.enable);\nconst status = global.get('doorStatus') || {};\nstatus.lockdown = enable;\nstatus.updatedAt = new Date().toISOString();\nglobal.set('doorStatus', status);\n\nconst cmdMsg = { payload: { cmd: enable ? 'LOCKDOWN_ON' : 'LOCKDOWN_OFF' } };\nconst respMsg = { payload: { ok: true, lockdown: enable }, res: msg.res };\nreturn [cmdMsg, respMsg];",
+    "name": "Bật/tắt chế độ khóa chết",
+    "func": "if (msg.authError) {\n    const errMsg = { statusCode: 401, payload: { ok: false, error: msg.authError }, res: msg.res };\n    return [null, errMsg];\n}\n\nconst db = global.get('db');\nconst enable = !!(msg.payload && msg.payload.enable);\n\nconst statusSnap = await db.ref('door_status').once('value');\nconst status = statusSnap.val() || {};\nstatus.lockdown = enable;\nstatus.updatedAt = new Date().toISOString();\nawait db.ref('door_status').set(status);\n\nconst cmdMsg = { payload: { cmd: enable ? 'LOCKDOWN_ON' : 'LOCKDOWN_OFF' } };\nconst respMsg = { payload: { ok: true, lockdown: enable }, res: msg.res };\nreturn [cmdMsg, respMsg];",
     "outputs": 2,
     "x": 620,
     "y": 1020,
-    "wires": [["mqtt_out_cmd"], ["http_resp_lockdown"]]
+    "wires": [
+      [
+        "mqtt_out_cmd"
+      ],
+      [
+        "http_resp_lockdown"
+      ]
+    ]
   },
   {
     "id": "http_resp_lockdown",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 840,
     "y": 1050,
     "wires": []
   },
-
   {
     "id": "cmt_admin_api",
     "type": "comment",
     "z": "tab_hgm",
-    "name": "8. API chi Admin: quan ly tai khoan + gan van tay/the/BLE",
+    "name": "8. API chỉ Admin: quản lý tài khoản + gán vân tay/thẻ/BLE",
     "x": 230,
     "y": 1100,
     "wires": []
   },
-
   {
     "id": "http_in_users",
     "type": "http in",
@@ -649,42 +778,55 @@
     "swaggerDoc": "",
     "x": 140,
     "y": 1140,
-    "wires": [["linkcall_users"]]
+    "wires": [
+      [
+        "linkcall_users"
+      ]
+    ]
   },
   {
     "id": "linkcall_users",
     "type": "link call",
     "z": "tab_hgm",
-    "name": "Goi: Auth Check",
-    "links": ["linkin_auth"],
+    "name": "Gọi: kiểm tra đăng nhập",
+    "links": [
+      "linkin_auth"
+    ],
     "timeout": "30",
     "x": 370,
     "y": 1140,
-    "wires": [["fn_users"]]
+    "wires": [
+      [
+        "fn_users"
+      ]
+    ]
   },
   {
     "id": "fn_users",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Danh sach tai khoan (chi admin)",
-    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chi admin duoc phep' };\n    return msg;\n}\nconst db = global.get('db');\nmsg.payload = db.prepare('SELECT id, username, email, role, created_at FROM users').all();\nreturn msg;",
+    "name": "Danh sách tài khoản (admin)",
+    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chỉ admin được phép' };\n    return msg;\n}\nconst db = global.get('db');\nconst snap = await db.ref('users').once('value');\nconst users = [];\nsnap.forEach((child) => {\n    const v = child.val();\n    users.push({ id: child.key, username: v.username, email: v.email, role: v.role, created_at: v.created_at });\n});\nmsg.payload = users;\nreturn msg;",
     "outputs": 1,
     "x": 640,
     "y": 1140,
-    "wires": [["http_resp_users"]]
+    "wires": [
+      [
+        "http_resp_users"
+      ]
+    ]
   },
   {
     "id": "http_resp_users",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 860,
     "y": 1140,
     "wires": []
   },
-
   {
     "id": "http_in_get_creds",
     "type": "http in",
@@ -696,42 +838,55 @@
     "swaggerDoc": "",
     "x": 175,
     "y": 1180,
-    "wires": [["linkcall_get_creds"]]
+    "wires": [
+      [
+        "linkcall_get_creds"
+      ]
+    ]
   },
   {
     "id": "linkcall_get_creds",
     "type": "link call",
     "z": "tab_hgm",
-    "name": "Goi: Auth Check",
-    "links": ["linkin_auth"],
+    "name": "Gọi: kiểm tra đăng nhập",
+    "links": [
+      "linkin_auth"
+    ],
     "timeout": "30",
     "x": 405,
     "y": 1180,
-    "wires": [["fn_get_creds"]]
+    "wires": [
+      [
+        "fn_get_creds"
+      ]
+    ]
   },
   {
     "id": "fn_get_creds",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Danh sach van tay/the/BLE cua 1 nguoi",
-    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chi admin duoc phep' };\n    return msg;\n}\nconst db = global.get('db');\nmsg.payload = db.prepare('SELECT id, type, credential_value, label, created_at FROM credentials WHERE user_id = ?').all(msg.req.params.id);\nreturn msg;",
+    "name": "Xem vân tay/thẻ của 1 người",
+    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chỉ admin được phép' };\n    return msg;\n}\nconst db = global.get('db');\nconst userId = msg.req.params.id;\nconst snap = await db.ref('credentials').orderByChild('user_id').equalTo(userId).once('value');\nconst creds = [];\nsnap.forEach((child) => {\n    const v = child.val();\n    creds.push({ id: child.key, type: v.type, credential_value: v.credential_value, label: v.label, created_at: v.created_at });\n});\nmsg.payload = creds;\nreturn msg;",
     "outputs": 1,
     "x": 670,
     "y": 1180,
-    "wires": [["http_resp_get_creds"]]
+    "wires": [
+      [
+        "http_resp_get_creds"
+      ]
+    ]
   },
   {
     "id": "http_resp_get_creds",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 890,
     "y": 1180,
     "wires": []
   },
-
   {
     "id": "http_in_add_cred",
     "type": "http in",
@@ -743,42 +898,55 @@
     "swaggerDoc": "",
     "x": 180,
     "y": 1220,
-    "wires": [["linkcall_add_cred"]]
+    "wires": [
+      [
+        "linkcall_add_cred"
+      ]
+    ]
   },
   {
     "id": "linkcall_add_cred",
     "type": "link call",
     "z": "tab_hgm",
-    "name": "Goi: Auth Check",
-    "links": ["linkin_auth"],
+    "name": "Gọi: kiểm tra đăng nhập",
+    "links": [
+      "linkin_auth"
+    ],
     "timeout": "30",
     "x": 410,
     "y": 1220,
-    "wires": [["fn_add_cred"]]
+    "wires": [
+      [
+        "fn_add_cred"
+      ]
+    ]
   },
   {
     "id": "fn_add_cred",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Gan van tay/the/BLE cho 1 nguoi",
-    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chi admin duoc phep' };\n    return msg;\n}\n\nconst db = global.get('db');\nconst body = msg.payload || {};\nif (!body.type || !body.value) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Thieu type/value' };\n    return msg;\n}\n\ndb.prepare('INSERT INTO credentials (user_id, type, credential_value, label, created_at) VALUES (?,?,?,?,?)')\n  .run(msg.req.params.id, body.type, body.value, body.label || '', new Date().toISOString());\n\nmsg.payload = { ok: true, message: 'Da them thong tin xac thuc' };\nreturn msg;",
+    "name": "Gán vân tay/thẻ cho 1 người",
+    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chỉ admin được phép' };\n    return msg;\n}\n\nconst db = global.get('db');\nconst userId = msg.req.params.id;\nconst body = msg.payload || {};\n\nif (!userId || userId === 'undefined' || userId === 'NaN') {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'ID người dùng không hợp lệ: \"' + userId + '\"' };\n    return msg;\n}\n\nconst userSnap = await db.ref('users/' + userId).once('value');\nif (!userSnap.exists()) {\n    msg.statusCode = 404;\n    msg.payload = { ok: false, error: 'Không tìm thấy người dùng với id: ' + userId };\n    return msg;\n}\n\nif (!body.type || !body.value) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Thiếu type/value' };\n    return msg;\n}\n\nconst safeKey = (s) => String(s).replace(/[.#$\\[\\]\\/]/g, '_');\n\n// Mỗi giá trị (VD 1 thẻ RFID, 1 vân tay) chỉ được gán cho ĐÚNG 1 người - chặn trùng lặp\nconst existingLookup = await db.ref(`credential_lookup/${body.type}/${safeKey(body.value)}`).once('value');\nif (existingLookup.exists()) {\n    msg.statusCode = 409;\n    msg.payload = { ok: false, error: 'Giá trị này đã được gán rồi (trùng ' + body.type + ': \"' + body.value + '\"). Xóa bản ghi cũ trước nếu muốn gán lại cho người khác.' };\n    return msg;\n}\n\nconst credRef = db.ref('credentials').push();\nconst created_at = new Date().toISOString();\n\nawait credRef.set({\n    user_id: userId,\n    type: body.type,\n    credential_value: body.value,\n    label: body.label || '',\n    created_at: created_at\n});\nawait db.ref(`credential_lookup/${body.type}/${safeKey(body.value)}`).set(credRef.key);\n\nmsg.payload = { ok: true, message: 'Đã thêm thông tin xác thực' };\nreturn msg;",
     "outputs": 1,
     "x": 660,
     "y": 1220,
-    "wires": [["http_resp_add_cred"]]
+    "wires": [
+      [
+        "http_resp_add_cred"
+      ]
+    ]
   },
   {
     "id": "http_resp_add_cred",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 880,
     "y": 1220,
     "wires": []
   },
-
   {
     "id": "http_in_del_cred",
     "type": "http in",
@@ -790,49 +958,125 @@
     "swaggerDoc": "",
     "x": 165,
     "y": 1260,
-    "wires": [["linkcall_del_cred"]]
+    "wires": [
+      [
+        "linkcall_del_cred"
+      ]
+    ]
   },
   {
     "id": "linkcall_del_cred",
     "type": "link call",
     "z": "tab_hgm",
-    "name": "Goi: Auth Check",
-    "links": ["linkin_auth"],
+    "name": "Gọi: kiểm tra đăng nhập",
+    "links": [
+      "linkin_auth"
+    ],
     "timeout": "30",
     "x": 400,
     "y": 1260,
-    "wires": [["fn_del_cred"]]
+    "wires": [
+      [
+        "fn_del_cred"
+      ]
+    ]
   },
   {
     "id": "fn_del_cred",
     "type": "function",
     "z": "tab_hgm",
-    "name": "Xoa 1 thong tin xac thuc",
-    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chi admin duoc phep' };\n    return msg;\n}\nconst db = global.get('db');\ndb.prepare('DELETE FROM credentials WHERE id = ?').run(msg.req.params.id);\nmsg.payload = { ok: true };\nreturn msg;",
+    "name": "Xóa 1 thông tin xác thực",
+    "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chỉ admin được phép' };\n    return msg;\n}\n\nconst db = global.get('db');\nconst credId = msg.req.params.id;\nconst snap = await db.ref('credentials/' + credId).once('value');\nconst cred = snap.val();\n\nif (cred) {\n    const safeKey = (s) => String(s).replace(/[.#$\\[\\]\\/]/g, '_');\n    await db.ref('credentials/' + credId).remove();\n    await db.ref(`credential_lookup/${cred.type}/${safeKey(cred.credential_value)}`).remove();\n}\n\nmsg.payload = { ok: true };\nreturn msg;",
     "outputs": 1,
     "x": 630,
     "y": 1260,
-    "wires": [["http_resp_del_cred"]]
+    "wires": [
+      [
+        "http_resp_del_cred"
+      ]
+    ]
   },
   {
     "id": "http_resp_del_cred",
     "type": "http response",
     "z": "tab_hgm",
-    "name": "Tra ve JSON",
+    "name": "Trả JSON về",
     "statusCode": "",
     "headers": {},
     "x": 850,
     "y": 1260,
     "wires": []
   },
-
   {
     "id": "cmt_cors",
     "type": "comment",
     "z": "tab_hgm",
-    "name": "Luu y: neu frontend chay o port khac Node-RED, phai bat httpNodeCors trong settings.js",
+    "name": "Lưu ý: frontend chạy port khác Node-RED thì phải bật CORS trong settings.js",
     "x": 330,
     "y": 1320,
+    "wires": []
+  },
+  {
+    "id": "http_in_lock",
+    "type": "http in",
+    "z": "tab_hgm",
+    "name": "POST /api/lock",
+    "url": "/api/lock",
+    "method": "post",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 145,
+    "y": 1000,
+    "wires": [
+      [
+        "linkcall_lock"
+      ]
+    ]
+  },
+  {
+    "id": "linkcall_lock",
+    "type": "link call",
+    "z": "tab_hgm",
+    "name": "Gọi: kiểm tra đăng nhập",
+    "links": [
+      "linkin_auth"
+    ],
+    "timeout": "30",
+    "x": 375,
+    "y": 1000,
+    "wires": [
+      [
+        "fn_lock"
+      ]
+    ]
+  },
+  {
+    "id": "fn_lock",
+    "type": "function",
+    "z": "tab_hgm",
+    "name": "Đóng cửa từ xa",
+    "func": "if (msg.authError) {\n    const errMsg = { statusCode: 401, payload: { ok: false, error: msg.authError }, res: msg.res };\n    return [null, errMsg];\n}\n\nconst db = global.get('db');\nconst now = new Date().toISOString();\nawait db.ref('access_logs').push({\n    user_id: msg.authUser.id,\n    username: msg.authUser.username,\n    method: 'remote_lock',\n    time: now\n});\n\nconst statusSnap = await db.ref('door_status').once('value');\nconst prevStatus = statusSnap.val() || {};\nawait db.ref('door_status').set({\n    state: 'locked',\n    method: 'remote_lock',\n    user: msg.authUser.username,\n    lockdown: prevStatus.lockdown || false,\n    updatedAt: now\n});\n\nconst cmdMsg = { payload: { cmd: 'LOCK' } };\nconst respMsg = { payload: { ok: true, message: 'Đã gửi lệnh đóng cửa' }, res: msg.res };\nreturn [cmdMsg, respMsg];",
+    "outputs": 2,
+    "x": 610,
+    "y": 1000,
+    "wires": [
+      [
+        "mqtt_out_cmd"
+      ],
+      [
+        "http_resp_lock"
+      ]
+    ]
+  },
+  {
+    "id": "http_resp_lock",
+    "type": "http response",
+    "z": "tab_hgm",
+    "name": "Trả JSON về",
+    "statusCode": "",
+    "headers": {},
+    "x": 830,
+    "y": 1000,
     "wires": []
   }
 ]

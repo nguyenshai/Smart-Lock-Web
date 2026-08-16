@@ -1,12 +1,12 @@
-// auth.js must load before this file
-// Provides API_BASE, getUser(), requireLogin(), apiFetch(), logout()
+// auth.js (nạp trước file này) cung cấp: API_BASE, getUser(), requireLogin(),
+// apiFetch(), logout()
 requireLogin();
 
 const POLL_INTERVAL_MS = 3000;
 
 const el = (id) => document.getElementById(id);
 
-// Show the signed in user and admin link
+// Hiển thị tên người dùng đang đăng nhập + link quản trị nếu là admin
 const currentUser = getUser();
 if (currentUser) {
   el("navUser").textContent = currentUser.username + (currentUser.role === "admin" ? " (admin)" : "");
@@ -24,6 +24,7 @@ const methodVal = el("methodVal");
 const userVal = el("userVal");
 const timeVal = el("timeVal");
 const unlockBtn = el("unlockBtn");
+const lockBtn = el("lockBtn");
 const lockdownToggle = el("lockdownToggle");
 const feedback = el("feedback");
 const historyBody = el("historyBody");
@@ -31,26 +32,26 @@ const historyBody = el("historyBody");
 function setConnection(isLive) {
   connDot.classList.remove("live", "down");
   connDot.classList.add(isLive ? "live" : "down");
-  connLabel.textContent = isLive ? "Connected" : "Disconnected";
+  connLabel.textContent = isLive ? "Đã kết nối" : "Mất kết nối";
 }
 
 function renderStatus(status) {
   stateBadge.classList.remove("locked", "unlocked", "lockdown");
 
   if (status.lockdown) {
-    stateBadge.textContent = "Locked down";
+    stateBadge.textContent = "Khóa chết";
     stateBadge.classList.add("lockdown");
   } else if (status.state === "unlocked") {
-    stateBadge.textContent = "Unlocked";
+    stateBadge.textContent = "Đang mở";
     stateBadge.classList.add("unlocked");
   } else {
-    stateBadge.textContent = "Locked";
+    stateBadge.textContent = "Đã khóa";
     stateBadge.classList.add("locked");
   }
 
   stateMeta.textContent = status.lockdown
-    ? "Fingerprint only"
-    : "Normal";
+    ? "Chỉ chấp nhận vân tay"
+    : "Hoạt động bình thường";
 
   methodVal.textContent = status.method || "—";
   userVal.textContent = status.user || "—";
@@ -63,7 +64,7 @@ function renderStatus(status) {
 
 function renderHistory(logs) {
   if (!logs || logs.length === 0) {
-    historyBody.innerHTML = '<tr><td colspan="3" class="empty-row">No history yet</td></tr>';
+    historyBody.innerHTML = '<tr><td colspan="3" class="empty-row">Chưa có lịch sử</td></tr>';
     return;
   }
   historyBody.innerHTML = logs.map((entry) => `
@@ -94,7 +95,7 @@ async function fetchHistory() {
     const data = await res.json();
     renderHistory(data);
   } catch (err) {
-    // Keep the old table on a temporary error
+    // giữ nguyên bảng cũ nếu lỗi tạm thời
   }
 }
 
@@ -105,22 +106,37 @@ async function refreshAll() {
 
 unlockBtn.addEventListener("click", async () => {
   unlockBtn.disabled = true;
-  feedback.textContent = "Sending unlock command...";
+  feedback.textContent = "Đang gửi lệnh mở cửa…";
   try {
     const res = await apiFetch("/api/unlock", { method: "POST" });
     const data = await res.json();
-    feedback.textContent = data.message || "Unlock command sent";
+    feedback.textContent = data.message || "Đã gửi lệnh mở cửa";
     setTimeout(refreshAll, 800);
   } catch (err) {
-    feedback.textContent = "Could not send the command";
+    feedback.textContent = "Không gửi được lệnh, kiểm tra kết nối";
   } finally {
     unlockBtn.disabled = false;
   }
 });
 
+lockBtn.addEventListener("click", async () => {
+  lockBtn.disabled = true;
+  feedback.textContent = "Đang gửi lệnh đóng cửa…";
+  try {
+    const res = await apiFetch("/api/lock", { method: "POST" });
+    const data = await res.json();
+    feedback.textContent = data.message || "Đã gửi lệnh đóng cửa";
+    setTimeout(refreshAll, 800);
+  } catch (err) {
+    feedback.textContent = "Không gửi được lệnh, kiểm tra kết nối";
+  } finally {
+    lockBtn.disabled = false;
+  }
+});
+
 lockdownToggle.addEventListener("change", async (e) => {
   const enable = e.target.checked;
-  feedback.textContent = enable ? "Turning lockdown on..." : "Turning lockdown off...";
+  feedback.textContent = enable ? "Đang bật chế độ khóa chết…" : "Đang tắt chế độ khóa chết…";
   try {
     const res = await apiFetch("/api/lockdown", {
       method: "POST",
@@ -128,10 +144,10 @@ lockdownToggle.addEventListener("change", async (e) => {
     });
     const data = await res.json();
     feedback.textContent = data.lockdown
-      ? "Lockdown enabled"
-      : "Lockdown disabled";
+      ? "Đã bật chế độ khóa chết"
+      : "Đã tắt chế độ khóa chết";
   } catch (err) {
-    feedback.textContent = "Could not change lockdown mode";
+    feedback.textContent = "Không thay đổi được chế độ, kiểm tra kết nối";
     e.target.checked = !enable;
   }
 });

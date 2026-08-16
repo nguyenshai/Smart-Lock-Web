@@ -1,141 +1,110 @@
-# API Documentation — HGM Smart Lock
+# API Documentation
 
-Local setup: Node-RED serves the API at `http://localhost:1880`.
+Ghi lại các API mà Node-RED cung cấp, để nhóm gọi từ web hoặc test bằng tay.
 
-## 1. Architecture
+Base URL: `http://localhost:1880`
+
+## Sơ đồ tổng quát
 
 ```
-ESP32  --MQTT-->  Node-RED (local)  <--HTTP API-->  Frontend (browser)
-                        |
-                        +--query--> SQLite database (hgm_database.db)
-                        +--HTTP-->    Google Sheets (optional history)
-                        +--HTTP-->    Telegram Bot (optional alerts)
+ESP32 --(MQTT)--> Node-RED --(HTTP API)--> Web
+                      |
+                      +--> Firebase (lưu tài khoản, vân tay/thẻ, lịch sử)
+                      +--> Google Sheets (tùy chọn)
+                      +--> Telegram (tùy chọn, báo động)
 ```
 
-## 2. Database schema (SQLite)
+Web **không** đụng trực tiếp vào Firebase — mọi thứ đi qua Node-RED hết. Đây là chỗ giữ "chìa khóa" (service account key) và quyết định ai được làm gì.
 
-```sql
-users            (id, username, email, password_hash, password_salt, role, created_at)
-credentials      (id, user_id, type, credential_value, label, created_at)
-access_logs      (id, user_id, method, time)
-sessions         (token, user_id, expires_at)
-password_resets  (token, user_id, expires_at)
+## Firebase lưu dữ liệu như thế nào
+
+Không phải bảng như Excel/SQL, mà là 1 cây JSON lồng nhau:
+
+```
+/users/{id}                     → { username, email, password_hash, password_salt, role, created_at }
+/credentials/{id}               → { user_id, type, credential_value, label, created_at }
+/credential_lookup/{type}/{giá trị} → id (để tra nhanh khi ESP32 gửi mã lên)
+/access_logs/{id}               → { user_id, username, method, time }
+/sessions/{token}                → { user_id, expires_at }
+/password_resets/{token}         → { user_id, expires_at }
+/door_status                     → { state, method, user, lockdown, updatedAt }
 ```
 
-- `role` has 2 values: `admin` | `member`.
-- `credentials.type` is one of: `fingerprint`, `rfid`, `ble`, `pin`.
-- Only **admin** can add or remove credentials for others.
+Vài điểm cần nhớ:
+- `role` chỉ có `admin` hoặc `member`.
+- `type` (của credential) là 1 trong 4: `fingerprint`, `rfid`, `ble`, `pin`.
+- `credential_lookup` giống như 1 bảng tra cứu phụ — mỗi lần thêm/xóa credential ở `credentials` thì bảng này cũng phải cập nhật theo, không thì lúc ESP32 quẹt thẻ sẽ tìm không ra.
+- ID ở đây là chuỗi tự sinh của Firebase (kiểu `-OExxxxxxxx`), **không phải số** như khi dùng SQL.
 
-## 3. MQTT topics
+## Các API — không cần đăng nhập
 
-| Topic | Direction | Sample payload | Meaning |
+| Method | Đường dẫn | Gửi lên | Trả về |
 |---|---|---|---|
-| `home/hgm/verify` | ESP32 → Node-RED | `{"type":"rfid","value":"04A3B2C1"}` | ESP32 sends the scanned code for lookup |
-| `home/hgm/verify_result` | Node-RED → ESP32 | `{"cmd":"GRANT"}` or `{"cmd":"DENY"}` | Auth result used to trigger the relay |
-| `home/hgm/alert` | ESP32 → Node-RED | `{"reason":"wrong_pin_3x"}` | Alert event |
-| `home/hgm/command` | Node-RED → ESP32 | `{"cmd":"UNLOCK"}` / `{"cmd":"LOCKDOWN_ON"}` / `{"cmd":"LOCKDOWN_OFF"}` | Web control command |
+| POST | `/api/auth/register` | `{ username, email, password }` | `{ ok, message }` |
+| POST | `/api/auth/login` | `{ username, password }` | `{ ok, token, user }` |
+| POST | `/api/auth/logout` | (kèm header token) | `{ ok }` |
+| POST | `/api/auth/forgot-password` | `{ email }` | `{ ok, message }` |
+| POST | `/api/auth/reset-password` | `{ token, newPassword }` | `{ ok, message }` |
 
-## 4. HTTP API — Auth (no token)
+Đăng nhập xong sẽ được 1 `token`, token này có hạn 24 tiếng. Từ giờ, gọi API nào cũng phải gắn kèm header:
 
-### POST `/api/auth/register`
-```json
-// request
-{ "username": "giang", "email": "giang@example.com", "password": "123456" }
-// response 200
-{ "ok": true, "message": "Register success" }
+```
+Authorization: Bearer <token>
 ```
 
-### POST `/api/auth/login`
-```json
-// request
-{ "username": "giang", "password": "123456" }
-// response 200
-{
-  "ok": true,
-  "token": "a1b2c3...",
-  "user": { "id": 2, "username": "giang", "email": "giang@example.com", "role": "member" }
-}
+Web tự làm việc này giúp mình rồi (xem `frontend/auth.js`), không cần tự viết lại.
+
+> **Quên mật khẩu chạy sao khi chưa có email thật?** Link đặt lại mật khẩu được in ra tab Debug của Node-RED, chưa gửi email thật (đang chạy local mà).
+
+## Các API — phải đăng nhập
+
+| Method | Đường dẫn | Gửi lên | Làm gì |
+|---|---|---|---|
+| GET | `/api/status` | — | Xem cửa đang đóng/mở |
+| GET | `/api/history?limit=20` | — | Xem lịch sử ra vào |
+| POST | `/api/unlock` | — | Mở cửa từ xa |
+| POST | `/api/lock` | — | Đóng cửa từ xa |
+| POST | `/api/lockdown` | `{ enable: true/false }` | Bật/tắt chế độ khóa chết (chỉ nhận vân tay) |
+
+## Các API — chỉ Admin mới gọi được
+
+| Method | Đường dẫn | Gửi lên | Làm gì |
+|---|---|---|---|
+| GET | `/api/users` | — | Xem toàn bộ tài khoản |
+| GET | `/api/users/:id/credentials` | — | Xem vân tay/thẻ của 1 người |
+| POST | `/api/users/:id/credentials` | `{ type, value, label }` | Gán vân tay/thẻ mới |
+| DELETE | `/api/credentials/:id` | — | Xóa 1 thông tin xác thực |
+
+Lưu ý: 1 giá trị (VD 1 mã thẻ) chỉ được gán cho **đúng 1 người**. Nếu gán trùng, server báo lỗi 409, không cho tạo bản ghi trùng.
+
+## ESP32 nói chuyện qua MQTT như thế nào
+
+| Topic | Ai gửi | Ví dụ | Ý nghĩa |
+|---|---|---|---|
+| `home/hgm/verify` | ESP32 → Node-RED | `{"type":"rfid","value":"04A3B2C1"}` | "Em vừa quét được cái này, cho qua không?" |
+| `home/hgm/verify_result` | Node-RED → ESP32 | `{"cmd":"GRANT"}` hoặc `{"cmd":"DENY"}` | Trả lời có cho mở hay không |
+| `home/hgm/alert` | ESP32 → Node-RED | `{"reason":"wrong_pin_3x"}` | Báo có gì bất thường (nhập sai nhiều lần...) |
+| `home/hgm/command` | Node-RED → ESP32 | `{"cmd":"UNLOCK"}` / `{"cmd":"LOCK"}` / `{"cmd":"LOCKDOWN_ON"}` / `{"cmd":"LOCKDOWN_OFF"}` | Lệnh điều khiển từ web |
+
+## Tài khoản admin có sẵn
+
+Lần đầu Node-RED chạy (Firebase còn trống), hệ thống tự tạo:
+
 ```
-Token is valid for **24 hours** and must be sent in the header:
-`Authorization: Bearer <token>`
-
-### POST `/api/auth/logout`
-Header `Authorization: Bearer <token>`. Deletes the current session.
-
-### POST `/api/auth/forgot-password`
-```json
-// request
-{ "email": "giang@example.com" }
-```
-In local mode, the reset link is printed in the Node-RED log instead of sending email.
-
-### POST `/api/auth/reset-password`
-```json
-// request
-{ "token": "token-from-log", "newPassword": "newpassword" }
-```
-
-## 5. HTTP API — Auth required (header `Authorization: Bearer <token>`)
-
-### GET `/api/status`
-```json
-{ "state": "unlocked", "method": "rfid", "user": "giang", "lockdown": false, "updatedAt": "2026-07-28T10:00:00.000Z" }
-```
-
-### GET `/api/history?limit=20`
-```json
-[{ "time": "2026-07-28T10:00:00.000Z", "user": "giang", "method": "rfid" }]
-```
-
-### POST `/api/unlock`
-No body needed. Unlocks remotely and saves an entry in `access_logs` with `method = "remote_web"`.
-
-### POST `/api/lockdown`
-```json
-{ "enable": true }
+username: admin
+password: admin123
 ```
 
-## 6. HTTP API — Admin only (header token of an account with `role = admin`)
+Nhớ đổi password sau khi test xong.
 
-### GET `/api/users`
-List all accounts.
+## Test thử bằng tay (không cần code)
 
-### GET `/api/users/:id/credentials`
-List credentials assigned to one user.
+```bash
+# Gửi thử 1 lượt quẹt thẻ giả
+mosquitto_pub -h localhost -t "home/hgm/verify" -m '{"type":"rfid","value":"TEST001"}'
 
-### POST `/api/users/:id/credentials`
-```json
-{ "type": "rfid", "value": "04A3B2C1", "label": "Main card" }
+# Nghe xem Node-RED trả lời gì
+mosquitto_sub -h localhost -t "home/hgm/verify_result"
 ```
 
-### DELETE `/api/credentials/:id`
-Delete a credential.
-
-## 7. Default admin account
-
-When Node-RED starts for the first time and no user exists, the system creates:
-- Username: `admin`
-- Password: `admin123`
-
-**Change it after testing.**
-
-## 8. Sample Google Apps Script (for the node "POST -> Google Sheets Web App")
-
-```javascript
-function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  const data = JSON.parse(e.postData.contents);
-  sheet.appendRow([data.time, data.user, data.method]);
-  return ContentService.createTextOutput(JSON.stringify({ ok: true }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-```
-Deploy as a **Web app**, set "Execute as: Me" and "Who has access: Anyone", then paste the URL into the matching node in `flows.json`.
-
-## 9. Notes
-
-- If the frontend runs on a different port than Node-RED (for example `8080` vs `1880`), enable CORS in `~/.node-red/settings.js`:
-  ```javascript
-  httpNodeCors: { origin: "*", methods: "GET,PUT,POST,DELETE" }
-  ```
-- `YOUR_APPS_SCRIPT_ID`, `YOUR_BOT_TOKEN`, and `YOUR_CHAT_ID` in `backend/flows.json` should be replaced with real values.
+Nếu ra `{"cmd":"GRANT"}` là ổn, `{"cmd":"DENY"}` là do chưa gán đúng thẻ này cho ai (vào `admin.html` gán trước).

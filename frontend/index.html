@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HGM Smart Lock</title>
+<title>Hệ thống cửa đa chiều HGM</title>
 <link rel="stylesheet" href="style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -15,44 +15,49 @@
   <header class="topbar">
     <div class="brand">
       <span class="brand-mark">HGM</span>
-      <span class="brand-name">Smart Lock</span>
+      <span class="brand-name">Hệ thống cửa đa chiều</span>
     </div>
     <div class="navbar">
       <span class="nav-user" id="navUser"></span>
-      <a href="admin.html" class="nav-link" id="adminLink" style="display:none">Account admin</a>
+      <a href="admin.html" class="nav-link" id="adminLink" style="display:none">Quản lý tài khoản</a>
       <div class="conn" id="connIndicator">
         <span class="conn-dot" id="connDot"></span>
-        <span id="connLabel">Connecting…</span>
+        <span id="connLabel">Đang kết nối…</span>
       </div>
-      <button class="btn btn-ghost" id="logoutBtn">Logout</button>
+      <button class="btn btn-ghost" id="logoutBtn">Đăng xuất</button>
     </div>
   </header>
 
   <main class="grid">
 
     <section class="card card-status">
-      <div class="card-label">Door status</div>
+      <div class="card-label">Trạng thái cửa</div>
       <div class="status-row">
         <span class="status-badge" id="stateBadge">—</span>
-        <span class="status-meta" id="stateMeta">No data</span>
+        <span class="status-meta" id="stateMeta">Chưa có dữ liệu</span>
       </div>
       <div class="status-detail" id="stateDetail">
-        <div><span class="detail-key">Method</span><span class="detail-val" id="methodVal">—</span></div>
-        <div><span class="detail-key">User</span><span class="detail-val" id="userVal">—</span></div>
-        <div><span class="detail-key">Updated</span><span class="detail-val" id="timeVal">—</span></div>
+        <div><span class="detail-key">Phương thức</span><span class="detail-val" id="methodVal">—</span></div>
+        <div><span class="detail-key">Người dùng</span><span class="detail-val" id="userVal">—</span></div>
+        <div><span class="detail-key">Cập nhật lúc</span><span class="detail-val" id="timeVal">—</span></div>
       </div>
     </section>
 
     <section class="card card-controls">
-      <div class="card-label">Remote control</div>
-      <button class="btn btn-primary" id="unlockBtn">
-        Unlock door
-      </button>
+      <div class="card-label">Điều khiển từ xa</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="unlockBtn">
+          Mở cửa từ xa
+        </button>
+        <button class="btn btn-secondary" id="lockBtn">
+          Đóng cửa
+        </button>
+      </div>
 
       <div class="lockdown-row">
         <div>
-          <div class="lockdown-title">Lockdown mode</div>
-          <div class="lockdown-desc">Fingerprint only</div>
+          <div class="lockdown-title">Chế độ khóa chết</div>
+          <div class="lockdown-desc">Chỉ cho phép mở bằng vân tay</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="lockdownToggle">
@@ -63,13 +68,13 @@
     </section>
 
     <section class="card card-history">
-      <div class="card-label">Access history</div>
+      <div class="card-label">Lịch sử ra vào</div>
       <table class="history-table">
         <thead>
-          <tr><th>Time</th><th>User</th><th>Method</th></tr>
+          <tr><th>Thời gian</th><th>Người dùng</th><th>Phương thức</th></tr>
         </thead>
         <tbody id="historyBody">
-          <tr><td colspan="3" class="empty-row">No history yet</td></tr>
+          <tr><td colspan="3" class="empty-row">Chưa có lịch sử</td></tr>
         </tbody>
       </table>
     </section>
