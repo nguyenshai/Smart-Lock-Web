@@ -67,6 +67,30 @@
       <div class="feedback" id="feedback"></div>
     </section>
 
+    <section class="card card-2fa">
+      <div class="card-heading">
+        <div class="card-label">2FA</div>
+        <button class="btn btn-primary btn-small" id="add2faBtn" type="button">+ Thêm 2FA</button>
+      </div>
+      <form class="twofa-form" id="twofaForm" style="display:none">
+        <div class="field">
+          <label for="twofaName">Tên tài khoản</label>
+          <input id="twofaName" type="text" placeholder="VD: Điện thoại của tôi" required>
+        </div>
+        <button class="btn btn-primary btn-small" type="submit">Tạo tài khoản</button>
+        <button class="btn btn-secondary btn-small" id="cancel2faBtn" type="button">Hủy</button>
+      </form>
+      <div id="twofaList"><div class="empty-row">Chưa có tài khoản 2FA</div></div>
+      <div class="twofa-verify">
+        <label for="twofaUnlockCode">Mã OTP để mở cửa</label>
+        <div class="twofa-verify-row">
+          <input id="twofaUnlockCode" inputmode="numeric" maxlength="6" placeholder="000000">
+          <button class="btn btn-primary btn-small" id="twofaUnlockBtn" type="button">Mở cửa</button>
+        </div>
+        <div class="feedback" id="twofaFeedback"></div>
+      </div>
+    </section>
+
     <section class="card card-history">
       <div class="card-label">Lịch sử ra vào</div>
       <table class="history-table">
@@ -80,6 +104,15 @@
     </section>
 
   </main>
+</div>
+
+<div class="qr-dialog" id="qrDialog" style="display:none">
+  <div class="qr-dialog-card">
+    <div class="card-label" id="qrTitle">Thêm vào Authenticator</div>
+    <img id="qrImage" alt="QR Code 2FA">
+    <p class="qr-secret" id="qrSecret"></p>
+    <button class="btn btn-secondary btn-small" id="closeQrBtn" type="button">Đóng</button>
+  </div>
 </div>
 
 <script src="auth.js"></script>

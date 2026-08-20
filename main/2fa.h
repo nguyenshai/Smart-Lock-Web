@@ -49,7 +49,7 @@ public:
     }
 
     void submitFingerprint(int fingerID) {
-        if (checkLockdown()) return;
+        // Trong chế độ khóa chết, fingerprint vẫn là phương thức được phép duy nhất.
         showWaitScreen("FINGERPRINT");
         mqttPublishVerify("fingerprint", String(fingerID));
     }
