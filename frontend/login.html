@@ -46,6 +46,8 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   btn.disabled = true;
 
   try {
+    const controller = new AbortController();
+    const requestTimeout = setTimeout(() => controller.abort(), 15000);
     const res = await fetch(API_BASE + "/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -53,8 +55,22 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         username: document.getElementById("username").value.trim(),
         password: document.getElementById("password").value,
       }),
+      signal: controller.signal,
     });
-    const data = await res.json();
+    clearTimeout(requestTimeout);
+    const responseText = await res.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      data = { ok: false, error: responseText || ("HTTP " + res.status) };
+    }
+
+    if (res.status === 404) {
+      msg.textContent = "Node-RED đang chạy nhưng chưa Deploy flow / không có API /api/auth/login (HTTP 404)";
+      msg.className = "auth-msg error";
+      return;
+    }
 
     if (!res.ok || !data.ok) {
       msg.textContent = data.error || "Login failed";
@@ -65,7 +81,9 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     setSession(data.token, data.user);
     window.location.href = "index.html";
   } catch (err) {
-    msg.textContent = "Could not connect to Node-RED (" + API_BASE + ")";
+    msg.textContent = err.name === "AbortError"
+      ? "Node-RED/Firebase không phản hồi sau 15 giây. Kiểm tra Debug Node-RED và Firebase."
+      : "Không kết nối được Node-RED (" + API_BASE + "). Hãy kiểm tra Node-RED hoặc địa chỉ API.";
     msg.className = "auth-msg error";
   } finally {
     btn.disabled = false;

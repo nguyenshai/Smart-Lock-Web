@@ -27,6 +27,7 @@ Không phải bảng như Excel/SQL, mà là 1 cây JSON lồng nhau:
 /access_logs/{id}               → { user_id, username, method, time }
 /sessions/{token}                → { user_id, expires_at }
 /password_resets/{token}         → { user_id, expires_at }
+/twofa_accounts/{id}             → { label, secret, created_at, created_by }
 /door_status                     → { state, method, user, lockdown, updatedAt }
 ```
 
@@ -65,6 +66,8 @@ Web tự làm việc này giúp mình rồi (xem `frontend/auth.js`), không c�
 | POST | `/api/unlock` | — | Mở cửa từ xa |
 | POST | `/api/lock` | — | Đóng cửa từ xa |
 | POST | `/api/lockdown` | `{ enable: true/false }` | Bật/tắt chế độ khóa chết (chỉ nhận vân tay) |
+| GET | `/api/2fa` | — | Danh sách tài khoản TOTP và OTP hiện tại |
+| POST | `/api/2fa/verify` | `{ id, otp }` | Kiểm tra OTP và gửi lệnh mở cửa qua MQTT |
 
 ## Các API — chỉ Admin mới gọi được
 
@@ -74,15 +77,22 @@ Web tự làm việc này giúp mình rồi (xem `frontend/auth.js`), không c�
 | GET | `/api/users/:id/credentials` | — | Xem vân tay/thẻ của 1 người |
 | POST | `/api/users/:id/credentials` | `{ type, value, label }` | Gán vân tay/thẻ mới |
 | DELETE | `/api/credentials/:id` | — | Xóa 1 thông tin xác thực |
+| POST | `/api/2fa` | `{ label }` | Tạo tài khoản TOTP và secret mới |
+| GET | `/api/users/:id/2fa` | — | Xem các secret TOTP của user được chọn |
+| POST | `/api/users/:id/2fa` | `{ label }` | Tạo secret TOTP gắn với user được chọn |
+| DELETE | `/api/2fa/:id` | — | Xóa secret TOTP |
 
 Lưu ý: 1 giá trị (VD 1 mã thẻ) chỉ được gán cho **đúng 1 người**. Nếu gán trùng, server báo lỗi 409, không cho tạo bản ghi trùng.
 
 ## ESP32 nói chuyện qua MQTT như thế nào
 
+Các bản ghi mở cửa dùng các phương thức: `Fingerprint`, `RFID + PIN`, `BLE + PIN` và `2FA OTP`.
+RFID/BLE chỉ nhận bước đầu và backend trả `{"cmd":"PENDING"}`; ESP32 phải gửi tiếp PIN đúng mới nhận `GRANT`.
+
 | Topic | Ai gửi | Ví dụ | Ý nghĩa |
 |---|---|---|---|
 | `home/hgm/verify` | ESP32 → Node-RED | `{"type":"rfid","value":"04A3B2C1"}` | "Em vừa quét được cái này, cho qua không?" |
-| `home/hgm/verify_result` | Node-RED → ESP32 | `{"cmd":"GRANT"}` hoặc `{"cmd":"DENY"}` | Trả lời có cho mở hay không |
+| `home/hgm/verify_result` | Node-RED → ESP32 | `{"cmd":"GRANT"}`, `{"cmd":"DENY"}` hoặc `{"cmd":"PENDING"}` | Trả lời xác thực |
 | `home/hgm/alert` | ESP32 → Node-RED | `{"reason":"wrong_pin_3x"}` | Báo có gì bất thường (nhập sai nhiều lần...) |
 | `home/hgm/command` | Node-RED → ESP32 | `{"cmd":"UNLOCK"}` / `{"cmd":"LOCK"}` / `{"cmd":"LOCKDOWN_ON"}` / `{"cmd":"LOCKDOWN_OFF"}` | Lệnh điều khiển từ web |
 

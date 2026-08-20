@@ -67,19 +67,38 @@
       <div class="feedback" id="feedback"></div>
     </section>
 
+    <section class="card card-2fa">
+      <div class="card-heading">
+        <div class="card-label">2FA</div>
+        <button class="btn btn-primary btn-small" id="add2faBtn" style="display:none">+ Thêm tài khoản 2FA</button>
+      </div>
+      <div class="twofa-list" id="twofaList">
+        <div class="empty-row">Đang tải tài khoản 2FA…</div>
+      </div>
+      <div class="feedback" id="twofaFeedback"></div>
+    </section>
+
     <section class="card card-history">
       <div class="card-label">Lịch sử ra vào</div>
       <table class="history-table">
         <thead>
-          <tr><th>Thời gian</th><th>Người dùng</th><th>Phương thức</th></tr>
+          <tr><th>Thời gian</th><th>Người dùng</th><th>Phương thức</th><th>Kết quả</th></tr>
         </thead>
         <tbody id="historyBody">
-          <tr><td colspan="3" class="empty-row">Chưa có lịch sử</td></tr>
+          <tr><td colspan="4" class="empty-row">Chưa có lịch sử</td></tr>
         </tbody>
       </table>
     </section>
 
   </main>
+</div>
+
+<div class="modal" id="twofaModal" hidden>
+  <div class="modal-panel">
+    <button class="modal-close" id="close2faModal" aria-label="Đóng">×</button>
+    <div class="card-label" id="twofaModalTitle">Tài khoản 2FA</div>
+    <div id="twofaModalBody"></div>
+  </div>
 </div>
 
 <script src="auth.js"></script>

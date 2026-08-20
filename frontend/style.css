@@ -109,6 +109,21 @@ body {
 }
 
 .card-history { grid-column: 1 / -1; }
+.card-2fa { grid-column: 1 / -1; }
+.card-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card-heading .card-label { margin-bottom: 16px; }
+.twofa-list { display: flex; flex-direction: column; gap: 10px; }
+.twofa-row { display: grid; grid-template-columns: minmax(120px, 1fr) 90px 55px auto auto; gap: 10px; align-items: center; padding: 10px; background: var(--surface-raised); border-radius: 8px; }
+.otp-code { color: var(--teal); font-size: 18px; letter-spacing: 2px; }
+.otp-remaining { color: var(--amber); }
+.modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(0, 0, 0, 0.72); z-index: 10; }
+.modal[hidden] { display: none; }
+.modal-panel { position: relative; width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; }
+.modal-close { position: absolute; top: 8px; right: 12px; background: none; border: 0; color: var(--text-secondary); font-size: 24px; cursor: pointer; }
+.modal-help { color: var(--text-secondary); font-size: 12px; }
+.qr-code { width: 240px; height: 240px; max-width: 100%; background: white; padding: 8px; }
+.otp-form { display: flex; flex-direction: column; gap: 12px; }
+.otp-form input { width: 100%; padding: 12px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font: 18px var(--font-mono); text-align: center; letter-spacing: 2px; }
 
 .card-label {
   font-family: var(--font-head);
@@ -259,6 +274,8 @@ body {
 
 @media (max-width: 640px) {
   .grid { grid-template-columns: 1fr; }
+  .twofa-row { grid-template-columns: 1fr 1fr; }
+  .twofa-row strong { grid-column: 1 / -1; }
 }
 
 /* ==== Auth pages (login / register / forgot / reset) ==== */
@@ -405,6 +422,8 @@ body {
 }
 
 .cred-form .field { margin-bottom: 0; }
+.admin-2fa { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+.admin-2fa .cred-form { grid-template-columns: 1fr auto; }
 
 .btn-small {
   padding: 10px 14px;

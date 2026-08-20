@@ -78,6 +78,13 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
             isShowingMessage = true;
             lcdMessageTime = millis();
             actionGranted();
+        } else if (cmd == "PENDING") {
+            SystemLog("MQTT", "Đã nhận bước 1, đang chờ PIN.");
+            lcd.clear();
+            lcd.setCursor(0, 0); lcd.print("DA NHAN THE/BLE");
+            lcd.setCursor(0, 1); lcd.print("Nhap PIN #");
+            isShowingMessage = true;
+            lcdMessageTime = millis();
         } else if (cmd == "DENY") {
             SystemLog("MQTT", "Xác thực thất bại.");
             lcd.clear();

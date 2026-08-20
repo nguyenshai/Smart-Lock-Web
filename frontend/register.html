@@ -62,6 +62,8 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
 
   btn.disabled = true;
   try {
+    const controller = new AbortController();
+    const requestTimeout = setTimeout(() => controller.abort(), 15000);
     const res = await fetch(API_BASE + "/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -70,7 +72,9 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
         email: document.getElementById("email").value.trim(),
         password: password,
       }),
+      signal: controller.signal,
     });
+    clearTimeout(requestTimeout);
     const data = await res.json();
 
     if (!res.ok || !data.ok) {
@@ -79,11 +83,19 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
       return;
     }
 
-    msg.textContent = "Success! Redirecting to login…";
+    if (!data.token || !data.user) {
+      msg.textContent = "Đăng ký thành công nhưng server chưa trả session";
+      msg.className = "auth-msg error";
+      return;
+    }
+    setSession(data.token, data.user);
+    msg.textContent = "Đăng ký thành công, đang vào dashboard…";
     msg.className = "auth-msg success";
-    setTimeout(() => (window.location.href = "login.html"), 1200);
+    window.location.href = "index.html";
   } catch (err) {
-    msg.textContent = "Could not connect to Node-RED (" + API_BASE + ")";
+    msg.textContent = err.name === "AbortError"
+      ? "Node-RED/Firebase không phản hồi sau 15 giây. Kiểm tra Debug Node-RED và Firebase."
+      : "Không kết nối được Node-RED (" + API_BASE + ")";
     msg.className = "auth-msg error";
   } finally {
     btn.disabled = false;
