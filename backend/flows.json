@@ -1338,7 +1338,7 @@
         "type": "function",
         "z": "a4ef017fd87d46af",
         "name": "Cấu hình Telegram",
-        "func": "const BOT_TOKEN = '8958706363:AAH_Sz1Fd5u5pxpri0hyPzM8bHHIv-9PqjA';\nconst CHAT_ID = '8356374904';\n\nflow.set('telegramBotToken', BOT_TOKEN);\nflow.set('telegramControlChatId', CHAT_ID);\nflow.set('telegramAlertChatId', CHAT_ID);\n\nnode.status({fill:'green', shape:'dot', text:'configured'});\nreturn null;",
+        "func": "const BOT_TOKEN = 'YOUR-BOT-TOKEN';\nconst CHAT_ID = 'YOUR-CHAT-ID';\n\nflow.set('telegramBotToken', BOT_TOKEN);\nflow.set('telegramControlChatId', CHAT_ID);\nflow.set('telegramAlertChatId', CHAT_ID);\n\nnode.status({fill:'green', shape:'dot', text:'configured'});\nreturn null;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
