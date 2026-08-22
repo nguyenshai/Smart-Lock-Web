@@ -11,13 +11,23 @@ PubSubClient mqttClient(espClient);
 
 // Hàm gửi cảnh báo
 void mqttPublishAlert(String reason) {
-    if (mqttClient.connected()) {
-        StaticJsonDocument<200> doc;
-        doc["reason"] = reason;
-        String output;
-        serializeJson(doc, output);
-        mqttClient.publish(MQTT_TOPIC_ALERT, output.c_str());
+    if (!mqttClient.connected()) {
+        SystemLog("MQTT", "Không gửi cảnh báo: MQTT mất kết nối.");
+        return;
+    }
+
+    StaticJsonDocument<200> doc;
+    doc["reason"] = reason;
+
+    String output;
+    serializeJson(doc, output);
+
+    bool sent = mqttClient.publish(MQTT_TOPIC_ALERT, output.c_str());
+
+    if (sent) {
         SystemLog("MQTT", "Đã gửi cảnh báo: " + reason);
+    } else {
+        SystemLog("MQTT", "Lỗi gửi cảnh báo MQTT.");
     }
 }
 
@@ -78,6 +88,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
             isShowingMessage = true;
             lcdMessageTime = millis();
             actionGranted();
+            mqttPublishAlert("Mở cửa sau khi xác thực thành công");
         } else if (cmd == "DENY") {
             SystemLog("MQTT", "Xác thực thất bại.");
             lcd.clear();

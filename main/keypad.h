@@ -63,6 +63,7 @@ void handleKeyPress(char key, unsigned long currentTime) {
         lcdMessageTime = currentTime;
         actionLocked();
         mqttPublishState(false); // Gửi trạng thái lên Web
+        mqttPublishAlert("Đóng cửa thủ công");
     } else if (key == 'B' || key == 'C' || key == 'D') {
         // Tắt không dùng
     } else if (key == '*') { // Phím XÓA
