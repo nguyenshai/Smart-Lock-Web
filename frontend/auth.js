@@ -1,6 +1,6 @@
 // CONFIG
 // Local Node-RED address
-const API_BASE = "http://localhost:1880";
+const API_BASE = "";
 
 function getToken() {
   return localStorage.getItem("hgm_token");

@@ -110,22 +110,17 @@ body {
 
 .card-history { grid-column: 1 / -1; }
 .card-2fa { grid-column: 1 / -1; }
-.card-heading, .twofa-item, .twofa-verify-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card-heading, .twofa-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .card-heading .card-label { margin-bottom: 0; }
 .twofa-form { grid-template-columns: 1fr auto auto; gap: 10px; align-items: end; margin-bottom: 16px; }
 .twofa-form .field { margin-bottom: 0; }
 .twofa-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
 .twofa-item:last-child { border-bottom: none; }
-.twofa-code { color: var(--teal); font-size: 20px; letter-spacing: 3px; margin-top: 6px; }
-.twofa-side { display: flex; align-items: center; gap: 12px; color: var(--text-muted); font-size: 12px; }
-.twofa-verify { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
-.twofa-verify label { display: block; color: var(--text-muted); font-size: 12px; margin-bottom: 6px; }
-.twofa-verify-row input { flex: 1; padding: 10px 12px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font: inherit; }
-.twofa-verify-row .btn { width: auto; }
+.twofa-hidden, .twofa-hint { color: var(--text-muted); font-size: 12px; margin-top: 6px; }
+.twofa-hint { padding-top: 14px; border-top: 1px solid var(--border); }
 .qr-dialog { position: fixed; inset: 0; background: rgba(0,0,0,.75); align-items: center; justify-content: center; padding: 20px; }
 .qr-dialog-card { width: 100%; max-width: 300px; padding: 20px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
 .qr-dialog-card img { display: block; width: 220px; height: 220px; margin: 10px auto 14px; background: white; }
-.qr-secret { color: var(--text-muted); font-size: 11px; word-break: break-all; margin: 0 0 14px; }
 
 .card-label {
   font-family: var(--font-head);
@@ -276,7 +271,7 @@ body {
 
 @media (max-width: 640px) {
   .grid { grid-template-columns: 1fr; }
-  .twofa-item, .twofa-side { align-items: flex-start; flex-direction: column; }
+  .twofa-item { align-items: flex-start; flex-direction: column; }
   .twofa-form { grid-template-columns: 1fr; }
 }
 

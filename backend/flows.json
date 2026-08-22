@@ -1,242 +1,24 @@
 [
     {
-        "id": "89401ae12e7ee260",
+        "id": "a4ef017fd87d46af",
         "type": "tab",
         "label": "Hệ Thống Khóa Cửa HGM (Firebase)",
         "disabled": false,
         "info": "Chay local: Node-RED + Mosquitto + Firebase Realtime Database. Frontend chi noi chuyen voi Node-RED."
     },
     {
-        "id": "e94e22afdf3d3fe0",
-        "type": "mqtt-broker",
-        "name": "",
-        "broker": "broker.hivemq.com",
-        "port": 1883,
-        "clientid": "",
-        "autoConnect": true,
-        "usetls": false,
-        "protocolVersion": 4,
-        "keepalive": 60,
-        "cleansession": true,
-        "autoUnsubscribe": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthRetain": "false",
-        "birthPayload": "",
-        "birthMsg": {},
-        "closeTopic": "",
-        "closeQos": "0",
-        "closeRetain": "false",
-        "closePayload": "",
-        "closeMsg": {},
-        "willTopic": "",
-        "willQos": "0",
-        "willRetain": "false",
-        "willPayload": "",
-        "willMsg": {},
-        "userProps": "",
-        "sessionExpiry": ""
-    },
-    {
-        "id": "5bd1dcea9271d15d",
-        "type": "global-config",
-        "env": []
-    },
-    {
-        "id": "e57a4e163f8b8210",
-        "type": "ui_tab",
-        "name": "Web Monitoring & Control",
-        "icon": "dashboard",
-        "order": 2,
-        "disabled": false,
-        "hidden": false
-    },
-    {
-        "id": "e898e5a235ca432e",
-        "type": "ui_tab",
-        "name": "ESP Simulator",
-        "icon": "dashboard",
-        "order": 1,
-        "disabled": false,
-        "hidden": false
-    },
-    {
-        "id": "0cc42a4e554b6895",
-        "type": "ui_group",
-        "name": "Thông số Nhiệt độ",
-        "tab": "e57a4e163f8b8210",
-        "order": 2,
-        "disp": true,
-        "width": "8",
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "4c12cc0f211329f8",
-        "type": "ui_group",
-        "name": "Thông số Độ ẩm",
-        "tab": "e57a4e163f8b8210",
-        "order": 3,
-        "disp": true,
-        "width": "8",
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "bbc433ca89e7957a",
-        "type": "ui_group",
-        "name": "Cường độ Ánh sáng",
-        "tab": "e57a4e163f8b8210",
-        "order": 4,
-        "disp": true,
-        "width": "8",
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "34bbd5b9ff03d621",
-        "type": "ui_group",
-        "name": "device control",
-        "tab": "e57a4e163f8b8210",
-        "order": 1,
-        "disp": true,
-        "width": "8",
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "1e4fcd83c49593f8",
-        "type": "ui_group",
-        "name": "Trạng thái thiết bị",
-        "tab": "e898e5a235ca432e",
-        "order": 2,
-        "disp": true,
-        "width": "25",
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "fb13b45def5ddf76",
-        "type": "ui_base",
-        "theme": {
-            "name": "theme-light",
-            "lightTheme": {
-                "default": "#0094CE",
-                "baseColor": "#0094CE",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "edited": true,
-                "reset": false
-            },
-            "darkTheme": {
-                "default": "#097479",
-                "baseColor": "#097479",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "edited": false
-            },
-            "customTheme": {
-                "name": "Untitled Theme 1",
-                "default": "#4B7930",
-                "baseColor": "#4B7930",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
-            },
-            "themeState": {
-                "base-color": {
-                    "default": "#0094CE",
-                    "value": "#0094CE",
-                    "edited": false
-                },
-                "page-titlebar-backgroundColor": {
-                    "value": "#0094CE",
-                    "edited": false
-                },
-                "page-backgroundColor": {
-                    "value": "#fafafa",
-                    "edited": false
-                },
-                "page-sidebar-backgroundColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "group-textColor": {
-                    "value": "#1bbfff",
-                    "edited": false
-                },
-                "group-borderColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "group-backgroundColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "widget-textColor": {
-                    "value": "#111111",
-                    "edited": false
-                },
-                "widget-backgroundColor": {
-                    "value": "#0094ce",
-                    "edited": false
-                },
-                "widget-borderColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "base-font": {
-                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
-                }
-            },
-            "angularTheme": {
-                "primary": "indigo",
-                "accents": "blue",
-                "warn": "red",
-                "background": "grey",
-                "palette": "light"
-            }
-        },
-        "site": {
-            "name": "Node-RED Dashboard",
-            "hideToolbar": "false",
-            "allowSwipe": "false",
-            "lockMenu": "false",
-            "allowTempTheme": "true",
-            "dateFormat": "DD/MM/YYYY",
-            "sizes": {
-                "sx": 48,
-                "sy": 48,
-                "gx": 6,
-                "gy": 6,
-                "cx": 6,
-                "cy": 6,
-                "px": 0,
-                "py": 0
-            }
-        }
-    },
-    {
-        "id": "broker_local",
-        "type": "mqtt-broker",
-        "name": "Mosquitto (máy mình)",
-        "broker": "localhost",
-        "port": "1883",
-        "clientid": "",
-        "usetls": false,
-        "compatmode": false,
-        "keepalive": "60",
-        "cleansession": true
-    },
-    {
-        "id": "f8d7c2251c801063",
+        "id": "14f6dce7d914e652",
         "type": "comment",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "1. Kết nối Firebase + tạo tài khoản admin đầu tiên",
         "x": 260,
         "y": 40,
         "wires": []
     },
     {
-        "id": "eedaa1f08bd9e3a6",
+        "id": "ceb1633a14bc4fda",
         "type": "inject",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Khi khởi động",
         "props": [
             {
@@ -250,14 +32,14 @@
         "y": 80,
         "wires": [
             [
-                "2c01c89744202b62"
+                "8046220d946c1c24"
             ]
         ]
     },
     {
-        "id": "2c01c89744202b62",
+        "id": "8046220d946c1c24",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Kết nối Firebase + tạo admin",
         "func": "const firebaseApp = global.get('firebaseApp');\nconst firebaseDatabase = global.get('firebaseDatabase');\nconst crypto = global.get('crypto');\nconst serviceAccount = global.get('serviceAccount');\n\nif (!firebaseApp || typeof firebaseApp.initializeApp !== 'function') {\n    node.error('global.get(\\\"firebaseApp\\\") không hợp lệ (kiểu=' + typeof firebaseApp + '). Kiểm tra dòng firebaseApp: require(\\'firebase-admin/app\\') trong settings.js, và nhớ restart Node-RED chưa.');\n    return null;\n}\nif (!firebaseDatabase || typeof firebaseDatabase.getDatabase !== 'function') {\n    node.error('global.get(\\\"firebaseDatabase\\\") không hợp lệ. Kiểm tra dòng firebaseDatabase: require(\\'firebase-admin/database\\') trong settings.js.');\n    return null;\n}\nif (!crypto || typeof crypto.randomBytes !== 'function') {\n    node.error('global.get(\\\"crypto\\\") không hợp lệ. Kiểm tra dòng crypto: require(\\'crypto\\') trong settings.js.');\n    return null;\n}\nif (!serviceAccount || typeof serviceAccount !== 'object') {\n    node.error('global.get(\\\"serviceAccount\\\") không hợp lệ (kiểu=' + typeof serviceAccount + '). Kiểm tra dòng serviceAccount: require(...) trong settings.js có đúng đường dẫn file serviceAccountKey.json không.');\n    return null;\n}\n\nlet db = global.get('db');\n\nif (!db) {\n    const { initializeApp, cert, getApps } = firebaseApp;\n    const { getDatabase } = firebaseDatabase;\n\n    if (getApps().length === 0) {\n        try {\n            initializeApp({\n                credential: cert(serviceAccount),\n                databaseURL: 'https://smart-lock-web-315cf-default-rtdb.asia-southeast1.firebasedatabase.app'\n            });\n        } catch (err) {\n            node.error('initializeApp thất bại - kiểm tra lại databaseURL và nội dung serviceAccountKey.json. Lỗi gốc: ' + err.message);\n            return null;\n        }\n    }\n\n    try {\n        db = getDatabase();\n    } catch (err) {\n        node.error('getDatabase() thất bại - kiểm tra lại databaseURL. Lỗi gốc: ' + err.message);\n        return null;\n    }\n    global.set('db', db);\n    db.ref('.info/connected').on('value', snap => {\n        if (snap.val() === true) node.warn('[Firebase] KẾT NỐI THÀNH CÔNG!');\n        else node.warn('[Firebase] BỊ NGẮT KẾT NỐI...');\n    });\n}\n\ntry {\n    const usernameSnap = await db.ref('users').orderByChild('username').equalTo('admin').once('value');\n    if (!usernameSnap.exists()) {\n        const salt = crypto.randomBytes(16).toString('hex');\n        const hash = crypto.scryptSync('admin123', salt, 64).toString('hex');\n\n        const newUserRef = db.ref('users').push();\n        await newUserRef.set({\n            username: 'admin',\n            email: 'admin@hgm.local',\n            password_hash: hash,\n            password_salt: salt,\n            role: 'admin',\n            created_at: new Date().toISOString()\n        });\n        node.warn('Đã tạo tài khoản admin mặc định: admin / admin123 - nhớ đổi mật khẩu sau khi test xong nhé!');\n    }\n\n    const statusSnap = await db.ref('door_status').once('value');\n    if (!statusSnap.exists()) {\n        await db.ref('door_status').set({\n            state: 'locked',\n            method: null,\n            user: null,\n            lockdown: false,\n            updatedAt: new Date().toISOString()\n        });\n    }\n} catch (err) {\n    node.error('Kết nối được Firebase nhưng đọc/ghi thất bại - kiểm tra Realtime Database Rules và databaseURL. Lỗi gốc: ' + err.message);\n}\n\nreturn null;",
         "outputs": 1,
@@ -268,18 +50,18 @@
         ]
     },
     {
-        "id": "2c6cb522088b1a8a",
+        "id": "75fbb724ead58048",
         "type": "comment",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "2. ESP32 gửi mã lên → Node-RED tra Firebase → cho phép hay từ chối",
         "x": 250,
         "y": 160,
         "wires": []
     },
     {
-        "id": "776a50d02f0e1d05",
+        "id": "8df45731c1f64c60",
         "type": "mqtt in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "ESP32 gửi mã quét lên",
         "topic": "home/hgm/verify",
         "qos": "1",
@@ -290,14 +72,14 @@
         "y": 200,
         "wires": [
             [
-                "e730f2239a2cffe6"
+                "bc5c927fc8036f82"
             ]
         ]
     },
     {
-        "id": "e730f2239a2cffe6",
+        "id": "bc5c927fc8036f82",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Kiểm tra vân tay/thẻ qua Firebase",
         "func": "// msg.payload: { type: 'fingerprint'|'rfid'|'ble'|'pin', value: '...' }\nconst db = global.get('db');\nconst body = msg.payload || {};\nconst safeKey = (s) => String(s).replace(/[.#$\\[\\]\\/]/g, '_');\nconst combinedMethod = (type) => type === 'rfid' ? 'RFID + PIN' : 'BLE + PIN';\n\nconst lookupSnap = await db.ref(`credential_lookup/${body.type}/${safeKey(body.value)}`).once('value');\nif (!lookupSnap.exists()) return [{ payload: { cmd: 'DENY' } }, null];\nconst credSnap = await db.ref('credentials/' + lookupSnap.val()).once('value');\nconst cred = credSnap.val();\nif (!cred) return [{ payload: { cmd: 'DENY' } }, null];\nconst userSnap = await db.ref('users/' + cred.user_id).once('value');\nconst user = userSnap.val();\nif (!user) return [{ payload: { cmd: 'DENY' } }, null];\n\nconst pendingRef = db.ref('pending_auth/' + cred.user_id);\nconst pendingSnap = await pendingRef.once('value');\nconst pending = pendingSnap.val();\nconst fresh = pending && Date.now() - Number(pending.created_at || 0) <= 30000;\n\nif (body.type === 'rfid' || body.type === 'ble') {\n    if (fresh && pending.method === 'pin') {\n        body.method = combinedMethod(body.type);\n        await pendingRef.remove();\n    } else {\n        await pendingRef.set({ user_id: cred.user_id, username: user.username, method: body.type, created_at: Date.now() });\n        return [null, null];\n    }\n} else if (body.type === 'pin') {\n    if (fresh && (pending.method === 'rfid' || pending.method === 'ble')) {\n        body.method = combinedMethod(pending.method);\n        await pendingRef.remove();\n    } else {\n        await pendingRef.set({ user_id: cred.user_id, username: user.username, method: 'pin', created_at: Date.now() });\n        return [null, null];\n    }\n} else if (body.type === 'fingerprint') {\n    body.method = 'Fingerprint';\n} else {\n    return [{ payload: { cmd: 'DENY' } }, null];\n}\n\nconst now = new Date().toISOString();\nawait db.ref('access_logs').push({ user_id: cred.user_id, username: user.username, method: body.method, time: now });\nconst statusSnap = await db.ref('door_status').once('value');\nconst prevStatus = statusSnap.val() || {};\nawait db.ref('door_status').set({ state: 'unlocked', method: body.method, user: user.username, lockdown: prevStatus.lockdown || false, updatedAt: now });\nconst resultMsg = { payload: { cmd: 'GRANT' } };\nconst sheetsMsg = { payload: { time: now, user: user.username, method: body.method } };\nreturn [resultMsg, sheetsMsg];",
         "outputs": 2,
@@ -305,17 +87,17 @@
         "y": 200,
         "wires": [
             [
-                "d3cc777ed585086f"
+                "f0198124b564a86c"
             ],
             [
-                "5227accee6465ba4"
+                "45b63adfd9764286"
             ]
         ]
     },
     {
-        "id": "d3cc777ed585086f",
+        "id": "f0198124b564a86c",
         "type": "mqtt out",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả kết quả cho ESP32",
         "topic": "home/hgm/verify_result",
         "qos": "1",
@@ -326,9 +108,9 @@
         "wires": []
     },
     {
-        "id": "5227accee6465ba4",
+        "id": "45b63adfd9764286",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Soạn dữ liệu gửi Google Sheets",
         "func": "msg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nreturn msg;",
         "outputs": 1,
@@ -336,14 +118,14 @@
         "y": 240,
         "wires": [
             [
-                "43b2ac4e1812f1a8"
+                "0a4d590978d2baff"
             ]
         ]
     },
     {
-        "id": "43b2ac4e1812f1a8",
+        "id": "0a4d590978d2baff",
         "type": "http request",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gửi lên Google Sheets",
         "method": "use",
         "ret": "txt",
@@ -358,51 +140,58 @@
         ]
     },
     {
-        "id": "348d7440e280ae82",
+        "id": "65c1020548556cc9",
         "type": "comment",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "3. ESP32 báo động → gửi cảnh báo qua Telegram",
-        "x": 250,
+        "x": 230,
         "y": 300,
         "wires": []
     },
     {
-        "id": "fe8c5f6703cb86cf",
+        "id": "fcd5f52ff4dd42a7",
         "type": "mqtt in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "ESP32 báo động",
         "topic": "home/hgm/alert",
         "qos": "1",
-        "datatype": "json",
+        "datatype": "auto-detect",
         "broker": "broker_local",
+        "nl": false,
+        "rap": false,
         "inputs": 0,
         "x": 145,
         "y": 340,
         "wires": [
             [
-                "8a0f2623d72f6edd"
+                "82c2c476622b160c"
             ]
         ]
     },
     {
-        "id": "8a0f2623d72f6edd",
+        "id": "82c2c476622b160c",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Soạn tin nhắn Telegram",
-        "func": "const TELEGRAM_TOKEN = 'YOUR_BOT_TOKEN';\nconst CHAT_ID = 'YOUR_CHAT_ID';\n\nconst text = 'CẢNH BÁO HGM: phát hiện bất thường tại cửa (' + (msg.payload.reason || 'không rõ') + ') lúc ' + new Date().toLocaleString('vi-VN');\n\nmsg.method = 'POST';\nmsg.headers = { 'Content-Type': 'application/json' };\nmsg.url = 'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage';\nmsg.payload = { chat_id: CHAT_ID, text: text };\nreturn msg;",
+        "func": "const token = flow.get('telegramBotToken');\nconst chatId = flow.get('telegramAlertChatId');\n\nif (!token || !chatId) {\n    node.error('Telegram alert configuration is missing', msg);\n    return null;\n}\n\nnode.status({fill:'blue', shape:'dot', text:'alert received'});\n\nlet data = msg.payload;\nif (Buffer.isBuffer(data)) data = data.toString();\nif (typeof data === 'string') {\n    const raw = data.trim();\n    try {\n        data = JSON.parse(raw);\n    } catch (err) {\n        data = {reason: raw};\n    }\n}\n\nlet reason = 'Không có mô tả.';\nif (data && typeof data === 'object') {\n    reason = data.reason || data.message || data.event || data.alert || JSON.stringify(data);\n} else if (data) {\n    reason = String(data);\n}\n\nconst timestamp = new Date().toLocaleString('vi-VN');\nconst text = [\n    '🚨 HGM SYSTEM',\n    'CẢNH BÁO BẢO MẬT',\n    'Lý do: ' + reason,\n    'Thời gian: ' + timestamp\n].join('\\n');\n\nmsg.method = 'POST';\nmsg.headers = {'Content-Type':'application/json'};\nmsg.url = 'https://api.telegram.org/bot' + token + '/sendMessage';\nmsg.payload = {chat_id: chatId, text: text};\nnode.status({fill:'green', shape:'dot', text:'sending alert'});\nreturn msg;",
         "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
         "x": 420,
         "y": 340,
         "wires": [
             [
-                "9736f6aa74343812"
+                "0b265168fa553631"
             ]
         ]
     },
     {
-        "id": "9736f6aa74343812",
+        "id": "0b265168fa553631",
         "type": "http request",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gửi cảnh báo Telegram",
         "method": "use",
         "ret": "txt",
@@ -410,6 +199,11 @@
         "url": "",
         "tls": "",
         "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
         "x": 690,
         "y": 340,
         "wires": [
@@ -417,54 +211,55 @@
         ]
     },
     {
-        "id": "debc21f9d80f17ec",
+        "id": "29c6b5f13b9ec0c8",
         "type": "comment",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "4. Node-RED gửi lệnh xuống ESP32 (mở / đóng / khóa chết)",
-        "x": 230,
+        "info": "",
+        "x": 220,
         "y": 400,
         "wires": []
     },
     {
-        "id": "c2f5e8d438c173ea",
+        "id": "0759924e4a770568",
         "type": "mqtt out",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gửi lệnh xuống ESP32",
         "topic": "home/hgm/command",
         "qos": "1",
         "retain": "false",
         "broker": "broker_local",
-        "x": 900,
-        "y": 720,
+        "x": 1220,
+        "y": 1000,
         "wires": []
     },
     {
-        "id": "10b949666a1ecd62",
+        "id": "102602dd2d9f38c1",
         "type": "comment",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "5. Hàm dùng chung: kiểm tra đã đăng nhập chưa",
         "x": 290,
         "y": 460,
         "wires": []
     },
     {
-        "id": "5b9172282b4a0caf",
+        "id": "34e2fc318124f371",
         "type": "link in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Kiểm tra đăng nhập: bắt đầu",
         "links": [],
         "x": 150,
         "y": 500,
         "wires": [
             [
-                "dca58ec3083d480b"
+                "809552e28fb46076"
             ]
         ]
     },
     {
-        "id": "dca58ec3083d480b",
+        "id": "809552e28fb46076",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Kiểm tra token đăng nhập",
         "func": "const db = global.get('db');\nconst authHeader = (msg.req && msg.req.headers['authorization']) || '';\nconst token = authHeader.replace('Bearer ', '').trim();\n\nmsg.authUser = null;\nmsg.authError = null;\n\nif (!token) {\n    msg.authError = 'Thiếu token đăng nhập';\n    return msg;\n}\n\nconst sessionSnap = await db.ref('sessions/' + token).once('value');\nconst session = sessionSnap.val();\n\nif (!session || new Date(session.expires_at) < new Date()) {\n    msg.authError = 'Token không hợp lệ hoặc đã hết hạn';\n    return msg;\n}\n\nconst userSnap = await db.ref('users/' + session.user_id).once('value');\nconst user = userSnap.val();\n\nif (!user) {\n    msg.authError = 'Tài khoản không còn tồn tại';\n    return msg;\n}\n\nmsg.authUser = { id: session.user_id, username: user.username, email: user.email, role: user.role };\nreturn msg;",
         "outputs": 1,
@@ -472,14 +267,14 @@
         "y": 500,
         "wires": [
             [
-                "b91edcd0276f46fa"
+                "67728b1c6e6c9e6f"
             ]
         ]
     },
     {
-        "id": "b91edcd0276f46fa",
+        "id": "67728b1c6e6c9e6f",
         "type": "link out",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Kiểm tra đăng nhập: kết thúc",
         "mode": "return",
         "links": [],
@@ -488,18 +283,18 @@
         "wires": []
     },
     {
-        "id": "1d2747b43c746049",
+        "id": "7917ffba3b5750dd",
         "type": "comment",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "6. API đăng ký / đăng nhập / đăng xuất / quên mật khẩu",
         "x": 220,
         "y": 580,
         "wires": []
     },
     {
-        "id": "cc1eb11dbfbc2dd7",
+        "id": "b6da643e9180d8eb",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/auth/register",
         "url": "/api/auth/register",
         "method": "post",
@@ -509,14 +304,14 @@
         "y": 620,
         "wires": [
             [
-                "4266340a2e2e5366"
+                "55d7b27ca1cef8e1"
             ]
         ]
     },
     {
-        "id": "4266340a2e2e5366",
+        "id": "55d7b27ca1cef8e1",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Xử lý đăng ký",
         "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst body = msg.payload || {};\n\nif (!body.username || !body.email || !body.password) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Thiếu username/email/password' };\n    return msg;\n}\nif (body.password.length < 6) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Mật khẩu tối thiểu 6 ký tự' };\n    return msg;\n}\n\nconst usernameSnap = await db.ref('users').orderByChild('username').equalTo(body.username).once('value');\nif (usernameSnap.exists()) {\n    msg.statusCode = 409;\n    msg.payload = { ok: false, error: 'Username đã tồn tại' };\n    return msg;\n}\nconst emailSnap = await db.ref('users').orderByChild('email').equalTo(body.email).once('value');\nif (emailSnap.exists()) {\n    msg.statusCode = 409;\n    msg.payload = { ok: false, error: 'Email đã tồn tại' };\n    return msg;\n}\n\nconst salt = crypto.randomBytes(16).toString('hex');\nconst hash = crypto.scryptSync(body.password, salt, 64).toString('hex');\n\nconst newUserRef = db.ref('users').push();\nawait newUserRef.set({\n    username: body.username,\n    email: body.email,\n    password_hash: hash,\n    password_salt: salt,\n    role: 'member',\n    created_at: new Date().toISOString()\n});\n\nmsg.payload = { ok: true, message: 'Đăng ký thành công, hãy đăng nhập' };\nreturn msg;",
         "outputs": 1,
@@ -524,14 +319,14 @@
         "y": 620,
         "wires": [
             [
-                "f6879f6d09d110f4"
+                "052acdb07d7ba314"
             ]
         ]
     },
     {
-        "id": "f6879f6d09d110f4",
+        "id": "052acdb07d7ba314",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -540,9 +335,9 @@
         "wires": []
     },
     {
-        "id": "81d92b47b756f864",
+        "id": "19a6eddbe21041af",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/auth/login",
         "url": "/api/auth/login",
         "method": "post",
@@ -552,14 +347,14 @@
         "y": 660,
         "wires": [
             [
-                "67f06aaef1857e6a"
+                "f0671a0888d6d97a"
             ]
         ]
     },
     {
-        "id": "67f06aaef1857e6a",
+        "id": "f0671a0888d6d97a",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Xử lý đăng nhập",
         "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst body = msg.payload || {};\n\nconst snap = await db.ref('users').orderByChild('username').equalTo(body.username).once('value');\nif (!snap.exists()) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: 'Sai username hoặc mật khẩu' };\n    return msg;\n}\n\nlet userId, user;\nsnap.forEach((child) => { userId = child.key; user = child.val(); });\n\nconst hash = crypto.scryptSync(body.password || '', user.password_salt, 64).toString('hex');\nif (hash !== user.password_hash) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: 'Sai username hoặc mật khẩu' };\n    return msg;\n}\n\nconst token = crypto.randomBytes(32).toString('hex');\nconst expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();\n\nawait db.ref('sessions/' + token).set({ user_id: userId, expires_at: expires });\n\nmsg.payload = {\n    ok: true,\n    token: token,\n    user: { id: userId, username: user.username, email: user.email, role: user.role }\n};\nreturn msg;",
         "outputs": 1,
@@ -567,14 +362,14 @@
         "y": 660,
         "wires": [
             [
-                "924153011b058827"
+                "43ab61400be3ae6e"
             ]
         ]
     },
     {
-        "id": "924153011b058827",
+        "id": "43ab61400be3ae6e",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -583,9 +378,9 @@
         "wires": []
     },
     {
-        "id": "51c51b485f8b5047",
+        "id": "32d303643e932f95",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/auth/logout",
         "url": "/api/auth/logout",
         "method": "post",
@@ -595,14 +390,14 @@
         "y": 700,
         "wires": [
             [
-                "33381a3c108b5732"
+                "2504d63fc34de046"
             ]
         ]
     },
     {
-        "id": "33381a3c108b5732",
+        "id": "2504d63fc34de046",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Xử lý đăng xuất",
         "func": "const db = global.get('db');\nconst authHeader = (msg.req && msg.req.headers['authorization']) || '';\nconst token = authHeader.replace('Bearer ', '').trim();\nif (token) await db.ref('sessions/' + token).remove();\nmsg.payload = { ok: true };\nreturn msg;",
         "outputs": 1,
@@ -610,14 +405,14 @@
         "y": 700,
         "wires": [
             [
-                "99e8409ae8a551ef"
+                "0531fb39819d6015"
             ]
         ]
     },
     {
-        "id": "99e8409ae8a551ef",
+        "id": "0531fb39819d6015",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -626,9 +421,9 @@
         "wires": []
     },
     {
-        "id": "82364c6f8cf59540",
+        "id": "69f9f088cdd64099",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/auth/forgot-password",
         "url": "/api/auth/forgot-password",
         "method": "post",
@@ -638,14 +433,14 @@
         "y": 740,
         "wires": [
             [
-                "c92c4ceca4b0e394"
+                "371f5288fc0a640f"
             ]
         ]
     },
     {
-        "id": "c92c4ceca4b0e394",
+        "id": "371f5288fc0a640f",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Xử lý quên mật khẩu",
         "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst email = (msg.payload || {}).email;\n\nconst snap = await db.ref('users').orderByChild('email').equalTo(email).once('value');\nif (snap.exists()) {\n    let userId;\n    snap.forEach((child) => { userId = child.key; });\n\n    const token = crypto.randomBytes(24).toString('hex');\n    const expires = new Date(Date.now() + 15 * 60 * 1000).toISOString();\n    await db.ref('password_resets/' + token).set({ user_id: userId, expires_at: expires });\n    // Local/dev: chưa nối SMTP thật, nên in link ra log Node-RED để test.\n    node.warn('[DEV] Link đặt lại mật khẩu cho ' + email + ': reset-password.html?token=' + token);\n}\n\nmsg.payload = { ok: true, message: 'Nếu email tồn tại trong hệ thống, hướng dẫn đặt lại mật khẩu đã được gửi' };\nreturn msg;",
         "outputs": 1,
@@ -653,14 +448,14 @@
         "y": 740,
         "wires": [
             [
-                "e0247e369e939255"
+                "e4278077b2869aa7"
             ]
         ]
     },
     {
-        "id": "e0247e369e939255",
+        "id": "e4278077b2869aa7",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -669,9 +464,9 @@
         "wires": []
     },
     {
-        "id": "13ac16cbbe7332d7",
+        "id": "4a538bb7a47cd000",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/auth/reset-password",
         "url": "/api/auth/reset-password",
         "method": "post",
@@ -681,14 +476,14 @@
         "y": 780,
         "wires": [
             [
-                "9a4a31a0804decaf"
+                "e8c9714a1b5b24cd"
             ]
         ]
     },
     {
-        "id": "9a4a31a0804decaf",
+        "id": "e8c9714a1b5b24cd",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Xử lý đặt lại mật khẩu",
         "func": "const db = global.get('db');\nconst crypto = global.get('crypto');\nconst body = msg.payload || {};\n\nconst snap = await db.ref('password_resets/' + body.token).once('value');\nconst record = snap.val();\n\nif (!record || new Date(record.expires_at) < new Date()) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Token không hợp lệ hoặc đã hết hạn' };\n    return msg;\n}\nif (!body.newPassword || body.newPassword.length < 6) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Mật khẩu mới tối thiểu 6 ký tự' };\n    return msg;\n}\n\nconst salt = crypto.randomBytes(16).toString('hex');\nconst hash = crypto.scryptSync(body.newPassword, salt, 64).toString('hex');\n\nawait db.ref('users/' + record.user_id).update({ password_hash: hash, password_salt: salt });\nawait db.ref('password_resets/' + body.token).remove();\n\n// Đăng xuất tất cả session cũ của người này\nconst sessSnap = await db.ref('sessions').orderByChild('user_id').equalTo(record.user_id).once('value');\nconst updates = {};\nsessSnap.forEach((child) => { updates[child.key] = null; });\nif (Object.keys(updates).length) await db.ref('sessions').update(updates);\n\nmsg.payload = { ok: true, message: 'Đặt lại mật khẩu thành công, hãy đăng nhập lại' };\nreturn msg;",
         "outputs": 1,
@@ -696,14 +491,14 @@
         "y": 780,
         "wires": [
             [
-                "95dbb6d6f7e4fd17"
+                "8d4de12797b227bc"
             ]
         ]
     },
     {
-        "id": "95dbb6d6f7e4fd17",
+        "id": "8d4de12797b227bc",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -712,18 +507,18 @@
         "wires": []
     },
     {
-        "id": "d9b2c946e1c2538d",
+        "id": "424e185b4f35c10b",
         "type": "comment",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "7. API cần đăng nhập: trạng thái / lịch sử / mở / đóng / khóa chết",
         "x": 210,
         "y": 860,
         "wires": []
     },
     {
-        "id": "99b3ddf996792214",
+        "id": "ac8e7ef4709e8a4b",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "GET /api/status",
         "url": "/api/status",
         "method": "get",
@@ -733,31 +528,31 @@
         "y": 900,
         "wires": [
             [
-                "64749fcdad9f949e"
+                "66bc55fd1b33498b"
             ]
         ]
     },
     {
-        "id": "64749fcdad9f949e",
+        "id": "66bc55fd1b33498b",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
         "links": [
-            "5b9172282b4a0caf"
+            "34e2fc318124f371"
         ],
         "timeout": "30",
         "x": 370,
         "y": 900,
         "wires": [
             [
-                "91c399b8bae1f43e"
+                "26db7d241a7db2b0"
             ]
         ]
     },
     {
-        "id": "91c399b8bae1f43e",
+        "id": "26db7d241a7db2b0",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả về trạng thái cửa",
         "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nconst db = global.get('db');\nconst snap = await db.ref('door_status').once('value');\nmsg.payload = snap.val() || {};\nreturn msg;",
         "outputs": 1,
@@ -765,25 +560,25 @@
         "y": 900,
         "wires": [
             [
-                "a611330fadfdbbda"
+                "2d3477c7df54b8b9"
             ]
         ]
     },
     {
-        "id": "a611330fadfdbbda",
+        "id": "2d3477c7df54b8b9",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
-        "x": 820,
-        "y": 900,
+        "x": 850,
+        "y": 880,
         "wires": []
     },
     {
-        "id": "7a3e2fe4bcf5b9bb",
+        "id": "c8791c242825ddbd",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "GET /api/history",
         "url": "/api/history",
         "method": "get",
@@ -793,31 +588,31 @@
         "y": 940,
         "wires": [
             [
-                "ffd710f48b485bb1"
+                "92997218aa28d7e9"
             ]
         ]
     },
     {
-        "id": "ffd710f48b485bb1",
+        "id": "92997218aa28d7e9",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
         "links": [
-            "5b9172282b4a0caf"
+            "34e2fc318124f371"
         ],
         "timeout": "30",
         "x": 375,
         "y": 940,
         "wires": [
             [
-                "ef67e1b33453d8ec"
+                "2bfa52fb64b80ec4"
             ]
         ]
     },
     {
-        "id": "ef67e1b33453d8ec",
+        "id": "2bfa52fb64b80ec4",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả về lịch sử ra vào",
         "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nconst db = global.get('db');\nconst limit = parseInt(msg.req.query.limit) || 20;\n\n// access_logs dùng push key (theo thời gian) nên limitToLast lấy được N bản ghi gần nhất\nconst snap = await db.ref('access_logs').orderByKey().limitToLast(limit).once('value');\nconst rows = [];\nsnap.forEach((child) => {\n    const v = child.val();\n    rows.unshift({ time: v.time, user: v.username, method: v.method });\n});\nmsg.payload = rows;\nreturn msg;",
         "outputs": 1,
@@ -825,25 +620,25 @@
         "y": 940,
         "wires": [
             [
-                "3d1d6a5e7df28639"
+                "14866922490f7f6b"
             ]
         ]
     },
     {
-        "id": "3d1d6a5e7df28639",
+        "id": "14866922490f7f6b",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
-        "x": 830,
-        "y": 940,
+        "x": 850,
+        "y": 920,
         "wires": []
     },
     {
-        "id": "4323eb60739818e0",
+        "id": "f04c72f025ff3155",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/unlock",
         "url": "/api/unlock",
         "method": "post",
@@ -853,31 +648,31 @@
         "y": 980,
         "wires": [
             [
-                "0fac64c8e21abce7"
+                "97c34422e7018e23"
             ]
         ]
     },
     {
-        "id": "0fac64c8e21abce7",
+        "id": "97c34422e7018e23",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
         "links": [
-            "5b9172282b4a0caf"
+            "34e2fc318124f371"
         ],
         "timeout": "30",
         "x": 375,
         "y": 980,
         "wires": [
             [
-                "3e8fe12ad8994a3e"
+                "0e85923fb7cedfaf"
             ]
         ]
     },
     {
-        "id": "3e8fe12ad8994a3e",
+        "id": "0e85923fb7cedfaf",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Mở cửa từ xa",
         "func": "if (msg.authError) {\n    const errMsg = { statusCode: 401, payload: { ok: false, error: msg.authError }, res: msg.res };\n    return [null, errMsg];\n}\n\nconst db = global.get('db');\nconst now = new Date().toISOString();\n\nawait db.ref('access_logs').push({\n    user_id: msg.authUser.id,\n    username: msg.authUser.username,\n    method: 'remote_web',\n    time: now\n});\n\nconst statusSnap = await db.ref('door_status').once('value');\nconst prevStatus = statusSnap.val() || {};\nawait db.ref('door_status').set({\n    state: 'unlocked',\n    method: 'remote_web',\n    user: msg.authUser.username,\n    lockdown: prevStatus.lockdown || false,\n    updatedAt: now\n});\n\nconst cmdMsg = { payload: { cmd: 'UNLOCK' } };\nconst respMsg = { payload: { ok: true, message: 'Đã gửi lệnh mở cửa' }, res: msg.res };\nreturn [cmdMsg, respMsg];",
         "outputs": 2,
@@ -885,17 +680,17 @@
         "y": 980,
         "wires": [
             [
-                "c2f5e8d438c173ea"
+                "0759924e4a770568"
             ],
             [
-                "12d049e3d713fc29"
+                "2fb5436e018bba89"
             ]
         ]
     },
     {
-        "id": "12d049e3d713fc29",
+        "id": "2fb5436e018bba89",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -904,9 +699,9 @@
         "wires": []
     },
     {
-        "id": "3a1331363f58464d",
+        "id": "bfc54ac1109ee0f4",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/lockdown",
         "url": "/api/lockdown",
         "method": "post",
@@ -916,31 +711,31 @@
         "y": 1020,
         "wires": [
             [
-                "9fe7c977401a2bea"
+                "ea8b345f87200f54"
             ]
         ]
     },
     {
-        "id": "9fe7c977401a2bea",
+        "id": "ea8b345f87200f54",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
         "links": [
-            "5b9172282b4a0caf"
+            "34e2fc318124f371"
         ],
         "timeout": "30",
         "x": 380,
         "y": 1020,
         "wires": [
             [
-                "1bababaef641cd44"
+                "3354e5d64a1a75f3"
             ]
         ]
     },
     {
-        "id": "1bababaef641cd44",
+        "id": "3354e5d64a1a75f3",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Bật/tắt chế độ khóa chết",
         "func": "if (msg.authError) {\n    const errMsg = { statusCode: 401, payload: { ok: false, error: msg.authError }, res: msg.res };\n    return [null, errMsg];\n}\n\nconst db = global.get('db');\nconst enable = !!(msg.payload && msg.payload.enable);\n\nconst statusSnap = await db.ref('door_status').once('value');\nconst status = statusSnap.val() || {};\nstatus.lockdown = enable;\nstatus.updatedAt = new Date().toISOString();\nawait db.ref('door_status').set(status);\n\nconst cmdMsg = { payload: { cmd: enable ? 'LOCKDOWN_ON' : 'LOCKDOWN_OFF' } };\nconst respMsg = { payload: { ok: true, lockdown: enable }, res: msg.res };\nreturn [cmdMsg, respMsg];",
         "outputs": 2,
@@ -948,17 +743,17 @@
         "y": 1020,
         "wires": [
             [
-                "c2f5e8d438c173ea"
+                "0759924e4a770568"
             ],
             [
-                "126efab8aadc4aed"
+                "365ae2b73ec3cbcb"
             ]
         ]
     },
     {
-        "id": "126efab8aadc4aed",
+        "id": "365ae2b73ec3cbcb",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -967,18 +762,18 @@
         "wires": []
     },
     {
-        "id": "6306e63ed2e9840f",
+        "id": "d0650d3957d7abc1",
         "type": "comment",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "8. API chỉ Admin: quản lý tài khoản + gán vân tay/thẻ/BLE",
         "x": 230,
         "y": 1100,
         "wires": []
     },
     {
-        "id": "07d37f523676fc6b",
+        "id": "eb8128d51f0735b1",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "GET /api/users",
         "url": "/api/users",
         "method": "get",
@@ -988,31 +783,31 @@
         "y": 1140,
         "wires": [
             [
-                "74e0066313872af1"
+                "570c582400ffeb48"
             ]
         ]
     },
     {
-        "id": "74e0066313872af1",
+        "id": "570c582400ffeb48",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
         "links": [
-            "5b9172282b4a0caf"
+            "34e2fc318124f371"
         ],
         "timeout": "30",
         "x": 370,
         "y": 1140,
         "wires": [
             [
-                "d6cf6464ce5d434b"
+                "f49b0dc8b47cc216"
             ]
         ]
     },
     {
-        "id": "d6cf6464ce5d434b",
+        "id": "f49b0dc8b47cc216",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Danh sách tài khoản (admin)",
         "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chỉ admin được phép' };\n    return msg;\n}\nconst db = global.get('db');\nconst snap = await db.ref('users').once('value');\nconst users = [];\nsnap.forEach((child) => {\n    const v = child.val();\n    users.push({ id: child.key, username: v.username, email: v.email, role: v.role, created_at: v.created_at });\n});\nmsg.payload = users;\nreturn msg;",
         "outputs": 1,
@@ -1020,14 +815,14 @@
         "y": 1140,
         "wires": [
             [
-                "172a7145741a8d42"
+                "cb62029fa7d525b8"
             ]
         ]
     },
     {
-        "id": "172a7145741a8d42",
+        "id": "cb62029fa7d525b8",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -1036,9 +831,9 @@
         "wires": []
     },
     {
-        "id": "66a2f967d0da187d",
+        "id": "cd3bb58f2488214a",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "GET /api/users/:id/credentials",
         "url": "/api/users/:id/credentials",
         "method": "get",
@@ -1048,31 +843,31 @@
         "y": 1180,
         "wires": [
             [
-                "a8d2c06e5386962f"
+                "c8ff6195d13d6606"
             ]
         ]
     },
     {
-        "id": "a8d2c06e5386962f",
+        "id": "c8ff6195d13d6606",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
         "links": [
-            "5b9172282b4a0caf"
+            "34e2fc318124f371"
         ],
         "timeout": "30",
         "x": 405,
         "y": 1180,
         "wires": [
             [
-                "c5fcc5fd6abde7b4"
+                "ae56dd0f4dde3f6a"
             ]
         ]
     },
     {
-        "id": "c5fcc5fd6abde7b4",
+        "id": "ae56dd0f4dde3f6a",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Xem vân tay/thẻ của 1 người",
         "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chỉ admin được phép' };\n    return msg;\n}\nconst db = global.get('db');\nconst userId = msg.req.params.id;\nconst snap = await db.ref('credentials').orderByChild('user_id').equalTo(userId).once('value');\nconst creds = [];\nsnap.forEach((child) => {\n    const v = child.val();\n    creds.push({ id: child.key, type: v.type, credential_value: v.credential_value, label: v.label, created_at: v.created_at });\n});\nmsg.payload = creds;\nreturn msg;",
         "outputs": 1,
@@ -1080,14 +875,14 @@
         "y": 1180,
         "wires": [
             [
-                "e08981aa1e38dffd"
+                "45228c6817868ed0"
             ]
         ]
     },
     {
-        "id": "e08981aa1e38dffd",
+        "id": "45228c6817868ed0",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -1096,9 +891,9 @@
         "wires": []
     },
     {
-        "id": "fcb741281f8f792e",
+        "id": "cc6cfb237b4b3420",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/users/:id/credentials",
         "url": "/api/users/:id/credentials",
         "method": "post",
@@ -1108,31 +903,31 @@
         "y": 1220,
         "wires": [
             [
-                "41ca6792cb9f57d2"
+                "e55c167d7620252d"
             ]
         ]
     },
     {
-        "id": "41ca6792cb9f57d2",
+        "id": "e55c167d7620252d",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
         "links": [
-            "5b9172282b4a0caf"
+            "34e2fc318124f371"
         ],
         "timeout": "30",
         "x": 410,
         "y": 1220,
         "wires": [
             [
-                "2934d1317504cfec"
+                "00ceafb0c5a2d0e4"
             ]
         ]
     },
     {
-        "id": "2934d1317504cfec",
+        "id": "00ceafb0c5a2d0e4",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gán vân tay/thẻ cho 1 người",
         "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chỉ admin được phép' };\n    return msg;\n}\n\nconst db = global.get('db');\nconst userId = msg.req.params.id;\nconst body = msg.payload || {};\n\nif (!userId || userId === 'undefined' || userId === 'NaN') {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'ID người dùng không hợp lệ: \"' + userId + '\"' };\n    return msg;\n}\n\nconst userSnap = await db.ref('users/' + userId).once('value');\nif (!userSnap.exists()) {\n    msg.statusCode = 404;\n    msg.payload = { ok: false, error: 'Không tìm thấy người dùng với id: ' + userId };\n    return msg;\n}\n\nif (!body.type || !body.value) {\n    msg.statusCode = 400;\n    msg.payload = { ok: false, error: 'Thiếu type/value' };\n    return msg;\n}\n\nconst safeKey = (s) => String(s).replace(/[.#$\\[\\]\\/]/g, '_');\n\n// Mỗi giá trị (VD 1 thẻ RFID, 1 vân tay) chỉ được gán cho ĐÚNG 1 người - chặn trùng lặp\nconst existingLookup = await db.ref(`credential_lookup/${body.type}/${safeKey(body.value)}`).once('value');\nif (existingLookup.exists()) {\n    msg.statusCode = 409;\n    msg.payload = { ok: false, error: 'Giá trị này đã được gán rồi (trùng ' + body.type + ': \"' + body.value + '\"). Xóa bản ghi cũ trước nếu muốn gán lại cho người khác.' };\n    return msg;\n}\n\nconst credRef = db.ref('credentials').push();\nconst created_at = new Date().toISOString();\n\nawait credRef.set({\n    user_id: userId,\n    type: body.type,\n    credential_value: body.value,\n    label: body.label || '',\n    created_at: created_at\n});\nawait db.ref(`credential_lookup/${body.type}/${safeKey(body.value)}`).set(credRef.key);\n\nmsg.payload = { ok: true, message: 'Đã thêm thông tin xác thực' };\nreturn msg;",
         "outputs": 1,
@@ -1140,14 +935,14 @@
         "y": 1220,
         "wires": [
             [
-                "c61ec7c64c1d1791"
+                "f62432b36001e6de"
             ]
         ]
     },
     {
-        "id": "c61ec7c64c1d1791",
+        "id": "f62432b36001e6de",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -1156,9 +951,9 @@
         "wires": []
     },
     {
-        "id": "f656705852f46e34",
+        "id": "71f8017b275ac8ef",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "DELETE /api/credentials/:id",
         "url": "/api/credentials/:id",
         "method": "delete",
@@ -1168,46 +963,52 @@
         "y": 1260,
         "wires": [
             [
-                "a060d94a883f988e"
+                "5b6352aef3feb130"
             ]
         ]
     },
     {
-        "id": "a060d94a883f988e",
+        "id": "5b6352aef3feb130",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
         "links": [
-            "5b9172282b4a0caf"
+            "34e2fc318124f371"
         ],
+        "linkType": "static",
         "timeout": "30",
         "x": 400,
         "y": 1260,
         "wires": [
             [
-                "d8e561ac830dca35"
+                "cb3a1f894522f3f9"
             ]
         ]
     },
     {
-        "id": "d8e561ac830dca35",
+        "id": "cb3a1f894522f3f9",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Xóa 1 thông tin xác thực",
         "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = { ok: false, error: msg.authError };\n    return msg;\n}\nif (msg.authUser.role !== 'admin') {\n    msg.statusCode = 403;\n    msg.payload = { ok: false, error: 'Chỉ admin được phép' };\n    return msg;\n}\n\nconst db = global.get('db');\nconst credId = msg.req.params.id;\nconst snap = await db.ref('credentials/' + credId).once('value');\nconst cred = snap.val();\n\nif (cred) {\n    const safeKey = (s) => String(s).replace(/[.#$\\[\\]\\/]/g, '_');\n    await db.ref('credentials/' + credId).remove();\n    await db.ref(`credential_lookup/${cred.type}/${safeKey(cred.credential_value)}`).remove();\n}\n\nmsg.payload = { ok: true };\nreturn msg;",
         "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
         "x": 630,
         "y": 1260,
         "wires": [
             [
-                "453ab91de5464f4e"
+                "8884a25b1f53b7a0"
             ]
         ]
     },
     {
-        "id": "453ab91de5464f4e",
+        "id": "8884a25b1f53b7a0",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
@@ -1216,18 +1017,18 @@
         "wires": []
     },
     {
-        "id": "62d7a851f76cade9",
+        "id": "45fbe782aa49d4d4",
         "type": "comment",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Lưu ý: frontend chạy port khác Node-RED thì phải bật CORS trong settings.js",
         "x": 330,
         "y": 1320,
         "wires": []
     },
     {
-        "id": "b705e255b82156db",
+        "id": "b8069e994763cc59",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/lock",
         "url": "/api/lock",
         "method": "post",
@@ -1237,31 +1038,31 @@
         "y": 1000,
         "wires": [
             [
-                "56c6a4617f9f6bed"
+                "c76670cdbb5003f1"
             ]
         ]
     },
     {
-        "id": "56c6a4617f9f6bed",
+        "id": "c76670cdbb5003f1",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
         "links": [
-            "5b9172282b4a0caf"
+            "34e2fc318124f371"
         ],
         "timeout": "30",
         "x": 375,
         "y": 1000,
         "wires": [
             [
-                "7010982c7f753f4f"
+                "e30ccfb69ba8eb68"
             ]
         ]
     },
     {
-        "id": "7010982c7f753f4f",
+        "id": "e30ccfb69ba8eb68",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Đóng cửa từ xa",
         "func": "if (msg.authError) {\n    const errMsg = { statusCode: 401, payload: { ok: false, error: msg.authError }, res: msg.res };\n    return [null, errMsg];\n}\n\nconst db = global.get('db');\nconst now = new Date().toISOString();\nawait db.ref('access_logs').push({\n    user_id: msg.authUser.id,\n    username: msg.authUser.username,\n    method: 'remote_lock',\n    time: now\n});\n\nconst statusSnap = await db.ref('door_status').once('value');\nconst prevStatus = statusSnap.val() || {};\nawait db.ref('door_status').set({\n    state: 'locked',\n    method: 'remote_lock',\n    user: msg.authUser.username,\n    lockdown: prevStatus.lockdown || false,\n    updatedAt: now\n});\n\nconst cmdMsg = { payload: { cmd: 'LOCK' } };\nconst respMsg = { payload: { ok: true, message: 'Đã gửi lệnh đóng cửa' }, res: msg.res };\nreturn [cmdMsg, respMsg];",
         "outputs": 2,
@@ -1269,59 +1070,59 @@
         "y": 1000,
         "wires": [
             [
-                "c2f5e8d438c173ea"
+                "0759924e4a770568"
             ],
             [
-                "a58546b3f5099b39"
+                "05dd69a3471519eb"
             ]
         ]
     },
     {
-        "id": "a58546b3f5099b39",
+        "id": "05dd69a3471519eb",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả JSON về",
         "statusCode": "",
         "headers": {},
-        "x": 830,
-        "y": 1000,
+        "x": 850,
+        "y": 960,
         "wires": []
     },
     {
-        "id": "ec9361a04f00e0c1",
+        "id": "ae54874f559424b4",
         "type": "mqtt in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Nhận đồng bộ khóa từ ESP32",
         "topic": "home/hgm/state_update",
         "qos": "1",
         "datatype": "json",
         "broker": "broker_local",
         "inputs": 0,
-        "x": 180,
-        "y": 280,
+        "x": 140,
+        "y": 260,
         "wires": [
             [
-                "bfcce377167c7ff4"
+                "f2819a7a6776b200"
             ]
         ]
     },
     {
-        "id": "bfcce377167c7ff4",
+        "id": "f2819a7a6776b200",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Đồng bộ lên Firebase",
         "func": "const db = global.get('db');\nconst state = msg.payload.state;\nif (state) {\n    const statusSnap = await db.ref('door_status').once('value');\n    const prevStatus = statusSnap.val() || {};\n    const now = new Date().toISOString();\n    \n    await db.ref('door_status').update({\n        state: state,\n        method: state === 'locked' ? 'Nút A (Bàn phím)' : prevStatus.method,\n        user: state === 'locked' ? 'Cửa đóng' : prevStatus.user,\n        updatedAt: now\n    });\n    \n    if (state === 'locked') {\n        await db.ref('access_logs').push({\n            user_id: 'system',\n            username: 'Cửa đóng',\n            method: 'Nút A (Bàn phím)',\n            time: now\n        });\n    }\n    \n    node.warn('[Sync] Đồng bộ trạng thái khóa từ ESP32: ' + state);\n}\nreturn null;",
         "outputs": 1,
-        "x": 430,
-        "y": 280,
+        "x": 400,
+        "y": 260,
         "wires": [
             []
         ]
     },
     {
-        "id": "2fa_get_in_hgm",
+        "id": "77acb4dee39efa29",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "GET /api/2fa",
         "url": "/api/2fa",
         "method": "get",
@@ -1329,34 +1130,53 @@
         "swaggerDoc": "",
         "x": 120,
         "y": 1380,
-        "wires": [["2fa_get_auth_hgm"]]
+        "wires": [
+            [
+                "1ab59008b96d1eaa"
+            ]
+        ]
     },
     {
-        "id": "2fa_get_auth_hgm",
+        "id": "1ab59008b96d1eaa",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
-        "links": ["5b9172282b4a0caf"],
+        "links": [
+            "34e2fc318124f371"
+        ],
         "timeout": "30",
         "x": 340,
         "y": 1380,
-        "wires": [["2fa_get_fn_hgm"]]
+        "wires": [
+            [
+                "baf7f51de23f126b"
+            ]
+        ]
     },
     {
-        "id": "2fa_get_fn_hgm",
+        "id": "baf7f51de23f126b",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Danh sách tài khoản 2FA",
         "func": "if (msg.authError) { msg.statusCode = 401; msg.payload = { ok: false, error: msg.authError }; return msg; }\nconst db = global.get('db');\nconst snap = await db.ref('twofa/' + msg.authUser.id).once('value');\nconst accounts = [];\nsnap.forEach((child) => { const v = child.val(); accounts.push({ id: child.key, name: v.name, secret: v.secret, created_at: v.created_at }); });\nmsg.payload = accounts;\nreturn msg;",
         "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
         "x": 590,
         "y": 1380,
-        "wires": [["2fa_get_out_hgm"]]
+        "wires": [
+            [
+                "5aa112eeccbdf5be"
+            ]
+        ]
     },
     {
-        "id": "2fa_get_out_hgm",
+        "id": "5aa112eeccbdf5be",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả danh sách 2FA",
         "statusCode": "",
         "headers": {},
@@ -1365,9 +1185,9 @@
         "wires": []
     },
     {
-        "id": "2fa_create_in_hgm",
+        "id": "2c718a78cdb4d1b3",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/2fa",
         "url": "/api/2fa",
         "method": "post",
@@ -1375,34 +1195,54 @@
         "swaggerDoc": "",
         "x": 120,
         "y": 1420,
-        "wires": [["2fa_create_auth_hgm"]]
+        "wires": [
+            [
+                "232b729cfb137fe1"
+            ]
+        ]
     },
     {
-        "id": "2fa_create_auth_hgm",
+        "id": "232b729cfb137fe1",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
-        "links": ["5b9172282b4a0caf"],
+        "links": [
+            "34e2fc318124f371"
+        ],
+        "linkType": "static",
         "timeout": "30",
         "x": 350,
         "y": 1420,
-        "wires": [["2fa_create_fn_hgm"]]
+        "wires": [
+            [
+                "f1af52f64a1ccd92"
+            ]
+        ]
     },
     {
-        "id": "2fa_create_fn_hgm",
+        "id": "f1af52f64a1ccd92",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Tạo tài khoản 2FA",
-        "func": "if (msg.authError) { msg.statusCode = 401; msg.payload = { ok: false, error: msg.authError }; return msg; }\nconst db = global.get('db');\nconst crypto = global.get('crypto');\nconst name = String((msg.payload || {}).name || '').trim();\nif (!name) { msg.statusCode = 400; msg.payload = { ok: false, error: 'Thiếu tên tài khoản' }; return msg; }\nconst chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';\nconst bytes = crypto.randomBytes(20);\nlet secret = '';\nfor (let i = 0, buffer = 0, bits = 0; i < bytes.length; i++) { buffer = (buffer << 8) | bytes[i]; bits += 8; while (bits >= 5) { secret += chars[(buffer >>> (bits -= 5)) & 31]; } }\nif (bits > 0) secret += chars[(bytes[bytes.length - 1] << (5 - bits)) & 31];\nconst ref = db.ref('twofa/' + msg.authUser.id).push();\nconst account = { id: ref.key, name: name, secret: secret, created_at: new Date().toISOString() };\nawait ref.set({ name: name, secret: secret, created_at: account.created_at });\nmsg.payload = { ok: true, account: account };\nreturn msg;",
+        "func": "if (msg.authError) {\n    msg.statusCode = 401;\n    msg.payload = {\n        ok: false,\n        error: msg.authError\n    };\n    return msg;\n}\n\nconst db = global.get(\"db\");\nconst crypto = global.get(\"crypto\");\nconst name = String((msg.payload || {}).name || \"\").trim();\n\nif (!name) {\n    msg.statusCode = 400;\n    msg.payload = {\n        ok: false,\n        error: \"Thiếu tên tài khoản\"\n    };\n    return msg;\n}\n\nconst chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567\";\nconst bytes = crypto.randomBytes(20);\n\nlet secret = \"\";\nlet buffer = 0;\nlet bits = 0;\n\nfor (let i = 0; i < bytes.length; i++) {\n    buffer = (buffer << 8) | bytes[i];\n    bits += 8;\n\n    while (bits >= 5) {\n        bits -= 5;\n        secret += chars[(buffer >>> bits) & 31];\n    }\n}\n\nif (bits > 0) {\n    secret += chars[(buffer << (5 - bits)) & 31];\n}\n\nconst ref = db.ref(\"twofa/\" + msg.authUser.id).push();\nconst account = {\n    id: ref.key,\n    name: name,\n    secret: secret,\n    created_at: new Date().toISOString()\n};\n\nawait ref.set({\n    name: name,\n    secret: secret,\n    created_at: account.created_at\n});\n\nmsg.payload = {\n    ok: true,\n    account: account\n};\n\nreturn msg;",
         "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
         "x": 610,
         "y": 1420,
-        "wires": [["2fa_create_out_hgm"]]
+        "wires": [
+            [
+                "e2528de11c5c87fa"
+            ]
+        ]
     },
     {
-        "id": "2fa_create_out_hgm",
+        "id": "e2528de11c5c87fa",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả tài khoản 2FA",
         "statusCode": "",
         "headers": {},
@@ -1411,9 +1251,9 @@
         "wires": []
     },
     {
-        "id": "2fa_verify_in_hgm",
+        "id": "324c51bd573becd5",
         "type": "http in",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "POST /api/2fa/verify",
         "url": "/api/2fa/verify",
         "method": "post",
@@ -1421,52 +1261,316 @@
         "swaggerDoc": "",
         "x": 140,
         "y": 1460,
-        "wires": [["2fa_verify_auth_hgm"]]
+        "wires": [
+            [
+                "b6da546343d350c1"
+            ]
+        ]
     },
     {
-        "id": "2fa_verify_auth_hgm",
+        "id": "b6da546343d350c1",
         "type": "link call",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gọi: kiểm tra đăng nhập",
-        "links": ["5b9172282b4a0caf"],
+        "links": [
+            "34e2fc318124f371"
+        ],
         "timeout": "30",
         "x": 370,
         "y": 1460,
-        "wires": [["2fa_verify_fn_hgm"]]
+        "wires": [
+            [
+                "5dadaa92f6b0d71f"
+            ]
+        ]
     },
     {
-        "id": "2fa_verify_fn_hgm",
+        "id": "5dadaa92f6b0d71f",
         "type": "function",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Xác thực OTP 2FA",
-        "func": "if (msg.authError) { msg.statusCode = 401; msg.payload = { ok: false, error: msg.authError }; return [null, msg]; }\nconst db = global.get('db');\nconst crypto = global.get('crypto');\nconst code = String((msg.payload || {}).code || '');\nconst snap = await db.ref('twofa/' + msg.authUser.id).once('value');\nconst base32 = (value) => { const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; let bits = ''; let out = []; String(value).replace(/=+$/, '').split('').forEach((c) => { const n = chars.indexOf(c.toUpperCase()); if (n >= 0) bits += n.toString(2).padStart(5, '0'); }); for (let i = 0; i + 8 <= bits.length; i += 8) out.push(parseInt(bits.slice(i, i + 8), 2)); return Buffer.from(out); };\nconst totp = (secret, counter) => { const data = Buffer.alloc(8); data.writeUInt32BE(Math.floor(counter / 0x100000000), 0); data.writeUInt32BE(counter >>> 0, 4); const hash = crypto.createHmac('sha1', base32(secret)).update(data).digest(); const offset = hash[hash.length - 1] & 15; const n = ((hash[offset] & 127) << 24) | (hash[offset + 1] << 16) | (hash[offset + 2] << 8) | hash[offset + 3]; return String(n % 1000000).padStart(6, '0'); };\nlet valid = false;\nsnap.forEach((child) => { const secret = child.val().secret; const counter = Math.floor(Date.now() / 30000); for (let delta = -1; delta <= 1; delta++) if (totp(secret, counter + delta) === code) valid = true; });\nif (!/^\\d{6}$/.test(code) || !valid) { msg.statusCode = 401; msg.payload = { ok: false, error: 'Mã OTP không đúng hoặc đã hết hạn' }; return [null, msg]; }\nconst now = new Date().toISOString();\nawait db.ref('access_logs').push({ user_id: msg.authUser.id, username: msg.authUser.username, method: '2FA OTP', time: now });\nconst statusSnap = await db.ref('door_status').once('value');\nconst prevStatus = statusSnap.val() || {};\nawait db.ref('door_status').set({ state: 'unlocked', method: '2FA OTP', user: msg.authUser.username, lockdown: prevStatus.lockdown || false, updatedAt: now });\nreturn [{ topic: 'home/hgm/verify_result', payload: { cmd: 'GRANT' } }, { payload: { ok: true, message: 'OTP hợp lệ, đã gửi lệnh mở cửa' }, res: msg.res }];",
+        "func": "if (msg.authError) { msg.statusCode = 401; msg.payload = { ok: false, error: msg.authError }; return [null, msg]; }\nconst db = global.get('db');\nconst crypto = global.get('crypto');\nconst code = String((msg.payload || {}).code || '');\nconst snap = await db.ref('twofa/' + msg.authUser.id).once('value');\nconst base32 = (value) => { const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; let bits = ''; let out = []; String(value).replace(/=+$/, '').split('').forEach((c) => { const n = chars.indexOf(c.toUpperCase()); if (n >= 0) bits += n.toString(2).padStart(5, '0'); }); for (let i = 0; i + 8 <= bits.length; i += 8) out.push(parseInt(bits.slice(i, i + 8), 2)); return Buffer.from(out); };\nconst totp = (secret, counter) => { const data = Buffer.alloc(8); data.writeUInt32BE(Math.floor(counter / 0x100000000), 0); data.writeUInt32BE(counter >>> 0, 4); const hash = crypto.createHmac('sha1', base32(secret)).update(data).digest(); const offset = hash[hash.length - 1] & 15; const n = ((hash[offset] & 127) << 24) | (hash[offset + 1] << 16) | (hash[offset + 2] << 8) | hash[offset + 3]; return String(n % 1000000).padStart(6, '0'); };\nlet valid = false;\nsnap.forEach((child) => { const secret = child.val().secret; const counter = Math.floor(Date.now() / 30000); for (let delta = -1; delta <= 1; delta++) if (totp(secret, counter + delta) === code) valid = true; });\nif (!/^\\d{6}$/.test(code) || !valid) { msg.statusCode = 400; msg.payload = { ok: false, error: 'Mã OTP không đúng hoặc đã hết hạn' }; return [null, msg]; }\nconst now = new Date().toISOString();\nawait db.ref('access_logs').push({ user_id: msg.authUser.id, username: msg.authUser.username, method: '2FA OTP', time: now });\nconst statusSnap = await db.ref('door_status').once('value');\nconst prevStatus = statusSnap.val() || {};\nawait db.ref('door_status').set({ state: 'unlocked', method: '2FA OTP', user: msg.authUser.username, lockdown: prevStatus.lockdown || false, updatedAt: now });\nreturn [{ topic: 'home/hgm/verify_result', payload: { cmd: 'GRANT' } }, { payload: { ok: true, message: 'OTP hợp lệ, đã gửi lệnh mở cửa' }, res: msg.res }];",
         "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
         "x": 630,
         "y": 1460,
-        "wires": [["2fa_verify_mqtt_hgm"], ["2fa_verify_out_hgm"]]
+        "wires": [
+            [
+                "127eac7fea228249"
+            ],
+            [
+                "f7dae7e43946b722"
+            ]
+        ]
     },
     {
-        "id": "2fa_verify_mqtt_hgm",
+        "id": "127eac7fea228249",
         "type": "mqtt out",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Gửi GRANT OTP cho ESP32",
         "topic": "home/hgm/verify_result",
         "qos": "1",
         "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
         "broker": "broker_local",
-        "x": 900,
-        "y": 1440,
+        "x": 1140,
+        "y": 1460,
         "wires": []
     },
     {
-        "id": "2fa_verify_out_hgm",
+        "id": "f7dae7e43946b722",
         "type": "http response",
-        "z": "89401ae12e7ee260",
+        "z": "a4ef017fd87d46af",
         "name": "Trả kết quả OTP",
         "statusCode": "",
         "headers": {},
         "x": 900,
         "y": 1480,
         "wires": []
+    },
+    {
+        "id": "a4b5c6d7e8f90101",
+        "type": "inject",
+        "z": "a4ef017fd87d46af",
+        "name": "Cấu hình Telegram khi khởi động",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 1560,
+        "wires": [
+            [
+                "a4b5c6d7e8f90102"
+            ]
+        ]
+    },
+    {
+        "id": "a4b5c6d7e8f90102",
+        "type": "function",
+        "z": "a4ef017fd87d46af",
+        "name": "Cấu hình Telegram",
+        "func": "const BOT_TOKEN = '8958706363:AAEkw9_SKEQhS8_mLusGxihhXxDV0Q_rDL4';\nconst CHAT_ID = '-5533589601';\n\nflow.set('telegramBotToken', BOT_TOKEN);\nflow.set('telegramControlChatId', CHAT_ID);\nflow.set('telegramAlertChatId', CHAT_ID);\n\nnode.status({fill:'green', shape:'dot', text:'configured'});\nreturn null;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 1560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a4b5c6d7e8f90103",
+        "type": "inject",
+        "z": "a4ef017fd87d46af",
+        "name": "Thăm dò Telegram",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "0.1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 1620,
+        "wires": [
+            [
+                "a4b5c6d7e8f90104"
+            ]
+        ]
+    },
+    {
+        "id": "a4b5c6d7e8f90104",
+        "type": "function",
+        "z": "a4ef017fd87d46af",
+        "name": "Tạo yêu cầu getUpdates",
+        "func": "const token = flow.get('telegramBotToken');\n\nif (!token) {\n    node.status({ fill: 'red', shape: 'ring', text: 'token not configured' });\n    return null;\n}\n\nnode.status({ fill: 'green', shape: 'dot', text: 'ready' });\n\nconst offset = flow.get('telegramOffset') || 0;\nconst allowed = encodeURIComponent(JSON.stringify(['message', 'callback_query']));\n\nmsg.method = 'GET';\nmsg.url = 'https://api.telegram.org/bot' + token +\n    '/getUpdates?offset=' + offset +\n    '&limit=100&timeout=0&allowed_updates=' + allowed;\nmsg.payload = '';\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 1620,
+        "wires": [
+            [
+                "a4b5c6d7e8f90105"
+            ]
+        ]
+    },
+    {
+        "id": "a4b5c6d7e8f90105",
+        "type": "http request",
+        "z": "a4ef017fd87d46af",
+        "name": "Nhận cập nhật Telegram",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 670,
+        "y": 1620,
+        "wires": [
+            [
+                "a4b5c6d7e8f90106"
+            ]
+        ]
+    },
+    {
+        "id": "a4b5c6d7e8f90106",
+        "type": "function",
+        "z": "a4ef017fd87d46af",
+        "name": "Tách cập nhật Telegram",
+        "func": "const body = msg.payload;\nif (!body || body.ok !== true || !Array.isArray(body.result)) {\n    return null;\n}\n\nconst updates = body.result;\nif (updates.length === 0) {\n    return null;\n}\n\nconst offset = Number(flow.get('telegramOffset') || 0);\nconst storedLast = Number(flow.get('telegramLastProcessedUpdateId'));\nconst lastProcessed = Number.isFinite(storedLast) ? storedLast : offset - 1;\n\nconst fresh = updates.filter(update => {\n    const id = Number(update && update.update_id);\n    return Number.isFinite(id) && id > lastProcessed;\n});\n\nif (fresh.length === 0) {\n    return null;\n}\n\nconst lastId = Number(fresh[fresh.length - 1].update_id);\nflow.set('telegramLastProcessedUpdateId', lastId);\nflow.set('telegramOffset', lastId + 1);\n\nreturn [fresh.map(update => ({payload: update}))];",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 1620,
+        "wires": [
+            [
+                "a4b5c6d7e8f90107"
+            ]
+        ]
+    },
+    {
+        "id": "a4b5c6d7e8f90107",
+        "type": "function",
+        "z": "a4ef017fd87d46af",
+        "name": "Định tuyến /start và nút bấm Telegram",
+        "func": "const update = msg.payload || {};\nconst token = flow.get('telegramBotToken');\nconst controlChatId = String(flow.get('telegramControlChatId') || '');\nconst db = global.get('db');\n\nif (!token) {\n    return [null, null, null];\n}\n\nfunction api(method) {\n    return 'https://api.telegram.org/bot' + token + '/' + method;\n}\n\nfunction sendMessage(chatId, text, keyboard) {\n    const payload = {chat_id: chatId, text: text};\n    if (keyboard) payload.reply_markup = {inline_keyboard: keyboard};\n    return {\n        method: 'POST',\n        headers: {'Content-Type':'application/json'},\n        url: api('sendMessage'),\n        payload: payload\n    };\n}\n\nfunction menuFor(status) {\n    const state = status && status.state;\n    const lockdown = Boolean(status && status.lockdown);\n    const doorText = state === 'unlocked'\n        ? '🔓 Cửa: ĐANG MỞ'\n        : state === 'locked'\n            ? '🔒 Cửa: ĐANG KHÓA'\n            : '⚪ Cửa: CHƯA XÁC ĐỊNH';\n    const lockdownText = lockdown\n        ? '🔴 Khóa chết: ĐANG BẬT'\n        : '🟢 Khóa chết: ĐANG TẮT';\n    const keyboard = [];\n\n    if (lockdown) {\n        keyboard.push([{text:'✅ Tắt khóa chết', callback_data:'door:lockdown_off'}]);\n    } else {\n        if (state !== 'unlocked') {\n            keyboard.push([{text:'🔓 Mở cửa', callback_data:'door:unlock'}]);\n        }\n        if (state !== 'locked') {\n            keyboard.push([{text:'🔒 Khóa cửa', callback_data:'door:lock'}]);\n        }\n        keyboard.push([{text:'⛔ Bật khóa chết', callback_data:'door:lockdown_on'}]);\n    }\n\n    keyboard.push([{text:'🔄 Cập nhật trạng thái', callback_data:'door:refresh'}]);\n\n    return {\n        text: '🔔 HGM SYSTEM\\n' + doorText + '\\n' + lockdownText + '\\n\\nChọn thao tác:',\n        keyboard: keyboard\n    };\n}\n\nasync function readDoorStatus() {\n    if (!db) return {};\n    const snapshot = await db.ref('door_status').once('value');\n    return snapshot.val() || {};\n}\n\nconst message = update.message;\nconst messageText = message && typeof message.text === 'string'\n    ? message.text.trim() : '';\n\nif (message && /^\\/start(?:@\\w+)?(?:\\s|$)/i.test(messageText)) {\n    const chatId = String(message.chat && message.chat.id || '');\n\n    if (chatId !== controlChatId) {\n        return [sendMessage(chatId, '⚠️ HGM SYSTEM\\nKhông được phép.'), null, null];\n    }\n\n    const menu = menuFor(await readDoorStatus());\n    return [sendMessage(chatId, menu.text, menu.keyboard), null, null];\n}\n\nconst query = update.callback_query;\nif (!query || !query.message || !query.from) {\n    return [null, null, null];\n}\n\nconst chatId = String(query.message.chat && query.message.chat.id || '');\nconst answer = {\n    method: 'POST',\n    headers: {'Content-Type':'application/json'},\n    url: api('answerCallbackQuery'),\n    payload: {callback_query_id: query.id, show_alert: false}\n};\n\nif (chatId !== controlChatId) {\n    answer.payload.text = 'Không được phép.';\n    return [sendMessage(chatId, '⚠️ HGM SYSTEM\\nKhông được phép.'), null, answer];\n}\n\nif (query.data === 'door:refresh') {\n    const menu = menuFor(await readDoorStatus());\n    answer.payload.text = 'Đã cập nhật trạng thái.';\n    return [sendMessage(chatId, menu.text, menu.keyboard), null, answer];\n}\n\nconst actions = {\n    'door:unlock': {cmd:'UNLOCK', label:'mở cửa'},\n    'door:lock': {cmd:'LOCK', label:'khóa cửa'},\n    'door:lockdown_on': {cmd:'LOCKDOWN_ON', label:'bật khóa chết'},\n    'door:lockdown_off': {cmd:'LOCKDOWN_OFF', label:'tắt khóa chết'}\n};\n\nconst action = actions[query.data];\nif (!action) {\n    answer.payload.text = 'Nút không hợp lệ.';\n    return [sendMessage(chatId, '⚠️ HGM SYSTEM\\nNút không hợp lệ.'), null, answer];\n}\n\nanswer.payload.text = 'Đang xử lý: ' + action.label + '.';\nreturn [null, {\n    payload: {action: action},\n    telegram: {\n        chatId: query.message.chat.id,\n        userId: query.from.id,\n        username: query.from.username || query.from.first_name || String(query.from.id)\n    }\n}, answer];",
+        "outputs": 3,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1210,
+        "y": 1620,
+        "wires": [
+            [
+                "a4b5c6d7e8f90109"
+            ],
+            [
+                "a4b5c6d7e8f90108"
+            ],
+            [
+                "a4b5c6d7e8f9010a"
+            ]
+        ]
+    },
+    {
+        "id": "a4b5c6d7e8f90108",
+        "type": "function",
+        "z": "a4ef017fd87d46af",
+        "name": "Thực thi lệnh cửa Telegram",
+        "func": "const action = msg.payload && msg.payload.action;\nconst token = flow.get('telegramBotToken');\nconst chatId = msg.telegram && msg.telegram.chatId;\nconst userId = msg.telegram && msg.telegram.userId;\nconst username = (msg.telegram && msg.telegram.username) || String(userId || '');\n\nif (!action || !token || !chatId) {\n    node.error('Telegram action is not configured', msg);\n    return null;\n}\n\nconst db = global.get('db');\nif (!db) {\n    node.error('Firebase database is not available', msg);\n    return null;\n}\n\nfunction menuFor(status) {\n    const state = status && status.state;\n    const lockdown = Boolean(status && status.lockdown);\n    const doorText = state === 'unlocked'\n        ? '🔓 Cửa: ĐANG MỞ'\n        : state === 'locked'\n            ? '🔒 Cửa: ĐANG KHÓA'\n            : '⚪ Cửa: CHƯA XÁC ĐỊNH';\n    const lockdownText = lockdown\n        ? '🔴 Khóa chết: ĐANG BẬT'\n        : '🟢 Khóa chết: ĐANG TẮT';\n    const keyboard = [];\n\n    if (lockdown) {\n        keyboard.push([{ text: '✅ Tắt khóa chết', callback_data: 'door:lockdown_off' }]);\n    } else {\n        if (state !== 'unlocked') keyboard.push([{ text: '🔓 Mở cửa', callback_data: 'door:unlock' }]);\n        if (state !== 'locked') keyboard.push([{ text: '🔒 Khóa cửa', callback_data: 'door:lock' }]);\n        keyboard.push([{ text: '⛔ Bật khóa chết', callback_data: 'door:lockdown_on' }]);\n    }\n\n    keyboard.push([{ text: '🔄 Cập nhật trạng thái', callback_data: 'door:refresh' }]);\n    return {\n        text: '🔔 HGM SYSTEM\\n' + doorText + '\\n' + lockdownText + '\\n\\nChọn thao tác:',\n        keyboard: keyboard\n    };\n}\n\nconst snapshot = await db.ref('door_status').once('value');\nconst previous = snapshot.val() || {};\nconst previousState = previous.state;\nconst previousLockdown = Boolean(previous.lockdown);\nconst now = new Date().toISOString();\nlet command = action.cmd;\nif (command === 'LOCKDOWN_TOGGLE') {\n    command = previousLockdown ? 'LOCKDOWN_OFF' : 'LOCKDOWN_ON';\n}\n\nlet next = Object.assign({}, previous);\nlet shouldSend = false;\nlet icon = 'ℹ️';\nlet resultText;\n\nif (command === 'UNLOCK') {\n    if (previousLockdown) {\n        icon = '⚠️';\n        resultText = 'Không thể mở cửa khi khóa chết đang bật.';\n    } else if (previousState === 'unlocked') {\n        resultText = 'Cửa đã ở trạng thái mở.';\n    } else {\n        next.state = 'unlocked';\n        shouldSend = true;\n        icon = '✅';\n        resultText = 'Đã gửi lệnh mở cửa.';\n    }\n} else if (command === 'LOCK') {\n    if (previousLockdown) {\n        icon = '⚠️';\n        resultText = 'Cửa đang ở chế độ khóa chết.';\n    } else if (previousState === 'locked') {\n        resultText = 'Cửa đã ở trạng thái khóa.';\n    } else {\n        next.state = 'locked';\n        shouldSend = true;\n        icon = '✅';\n        resultText = 'Đã gửi lệnh khóa cửa.';\n    }\n} else if (command === 'LOCKDOWN_ON') {\n    if (previousLockdown) {\n        resultText = 'Khóa chết đã được bật.';\n    } else {\n        next.lockdown = true;\n        next.state = 'locked';\n        shouldSend = true;\n        icon = '✅';\n        resultText = 'Đã bật khóa chết.';\n    }\n} else if (command === 'LOCKDOWN_OFF') {\n    if (!previousLockdown) {\n        resultText = 'Khóa chết đã được tắt.';\n    } else {\n        next.lockdown = false;\n        shouldSend = true;\n        icon = '✅';\n        resultText = 'Đã tắt khóa chết.';\n    }\n} else {\n    node.error('Unknown Telegram action: ' + command, msg);\n    return null;\n}\n\nif (shouldSend) {\n    next.method = 'telegram';\n    next.user = username;\n    next.updatedAt = now;\n    await db.ref('door_status').set(next);\n}\n\nawait db.ref('access_logs').push({\n    user_id: userId,\n    username: username,\n    method: 'telegram',\n    action: command,\n    result: shouldSend ? 'executed' : 'ignored',\n    time: now\n});\n\nconst menu = menuFor(next);\nconst statusText = menu.text.replace(/^🔔 HGM SYSTEM\\n/, '');\nconst replyText = icon + ' HGM SYSTEM\\n' + resultText + '\\n\\n' + statusText;\nconst confirmationMsg = {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    url: 'https://api.telegram.org/bot' + token + '/sendMessage',\n    payload: { chat_id: chatId, text: replyText, reply_markup: { inline_keyboard: menu.keyboard } }\n};\nconst commandMsg = shouldSend ? { payload: { cmd: command } } : null;\nreturn [commandMsg, confirmationMsg];",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1580,
+        "y": 1620,
+        "wires": [
+            [
+                "0759924e4a770568"
+            ],
+            [
+                "a4b5c6d7e8f90109"
+            ]
+        ]
+    },
+    {
+        "id": "a4b5c6d7e8f90109",
+        "type": "http request",
+        "z": "a4ef017fd87d46af",
+        "name": "Gửi tin nhắn Telegram",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1620,
+        "y": 1560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a4b5c6d7e8f9010a",
+        "type": "http request",
+        "z": "a4ef017fd87d46af",
+        "name": "Trả lời callback Telegram",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1570,
+        "y": 1680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "broker_local",
+        "type": "mqtt-broker",
+        "name": "Mosquitto (máy mình)",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true
     }
 ]

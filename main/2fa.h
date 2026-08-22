@@ -42,6 +42,12 @@ public:
         mqttPublishVerify("pin", password);
     }
 
+    void submitOtp(String otp) {
+        if (checkLockdown()) return;
+        showWaitScreen("OTP");
+        mqttPublishVerify("otp", otp);
+    }
+
     void submitRFID(String cardID) {
         if (checkLockdown()) return;
         showWaitScreen("RFID");
