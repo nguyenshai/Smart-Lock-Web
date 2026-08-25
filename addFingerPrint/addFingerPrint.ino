@@ -18,9 +18,9 @@ void setup() {
   finger.begin(57600);
 
   if (finger.verifyPassword()) {
-    Serial.println("✅ Da tim thay cam bien van tay!");
+    Serial.println("Da tim thay cam bien van tay!");
   } else {
-    Serial.println("❌ Khong tim thay cam bien. Hay kiem tra lai day P16, P17.");
+    Serial.println("Khong tim thay cam bien. Hay kiem tra lai day P16, P17.");
     while (1) { delay(1); }
   }
 }
@@ -69,7 +69,7 @@ uint8_t getFingerprintEnroll() {
 
   p = finger.image2Tz(1);
   if (p != FINGERPRINT_OK) {
-    Serial.println("❌ Anh bi mo hoac loi. Vui long thu lai.");
+    Serial.println("!!Anh bi mo hoac loi. Vui long thu lai.!!");
     return false;
   }
 
@@ -97,7 +97,7 @@ uint8_t getFingerprintEnroll() {
 
   p = finger.image2Tz(2);
   if (p != FINGERPRINT_OK) {
-    Serial.println("❌ Anh bi mo hoac loi. Vui long thu lai.");
+    Serial.println("!!Anh bi mo hoac loi. Vui long thu lai.!!");
     return false;
   }
 
@@ -107,7 +107,7 @@ uint8_t getFingerprintEnroll() {
   if (p == FINGERPRINT_OK) {
     Serial.println("Da tao xong Khuon mau!");
   } else if (p == FINGERPRINT_ENROLLMISMATCH) {
-    Serial.println("❌ HAI LAN QUET KHONG KHOP NHAU! Vui long lam lai.");
+    Serial.println("!!HAI LAN QUET KHONG KHOP NHAU! Vui long lam lai.!!");
     return false;
   } else {
     Serial.println("Loi khong xac dinh");
@@ -116,11 +116,11 @@ uint8_t getFingerprintEnroll() {
   
   p = finger.storeModel(id);
   if (p == FINGERPRINT_OK) {
-    Serial.println("\n🎉 HOAN TAT! LUU VAN TAY THANH CONG VAO ID: " + String(id));
+    Serial.println("\nHOAN TAT! LUU VAN TAY THANH CONG VAO ID: " + String(id));
     Serial.println("------------------------------------------------");
     return true;
   } else {
-    Serial.println("❌ Loi khi luu vao bo nho cam bien.");
+    Serial.println("!!Loi khi luu vao bo nho cam bien.!!");
     return false;
   }   
 }
