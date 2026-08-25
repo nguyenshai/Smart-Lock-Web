@@ -19,11 +19,12 @@ unsigned long lastDebounceTime[ROW_NUM][COLUMN_NUM];
 const unsigned long debounceTimeMs = 30;
 
 String enteredPassword = ""; 
+bool otpMode = false;
 
 void updatePasswordLCD() {
     lcd.clear();
     lcd.setCursor(0, 0);
-    lcd.print("Nhap Mat Khau:");
+    lcd.print(otpMode ? "Nhap OTP:" : "Nhap Mat Khau:");
     lcd.setCursor(0, 1);
     
     for (int i = 0; i < enteredPassword.length(); i++) {
@@ -63,18 +64,34 @@ void handleKeyPress(char key, unsigned long currentTime) {
         lcdMessageTime = currentTime;
         actionLocked();
         mqttPublishState(false); // Gửi trạng thái lên Web
-    } else if (key == 'B' || key == 'C' || key == 'D') {
+    } else if (key == 'B' || key == 'C') {
         // Tắt không dùng
+    } else if (key == 'D') {
+        otpMode = !otpMode;
+        enteredPassword = "";
+        updatePasswordLCD();
     } else if (key == '*') { // Phím XÓA
         if (enteredPassword.length() > 0) {
             enteredPassword.remove(enteredPassword.length() - 1); 
             updatePasswordLCD();
         }
     } else if (key == '#') { // Phím ENTER
-        SystemLog("KEYPAD", "Kiểm tra mật khẩu...");
+        SystemLog("KEYPAD", otpMode ? "Kiểm tra OTP..." : "Kiểm tra mật khẩu...");
         if (enteredPassword.length() > 0) {
-            authManager.submitPassword(enteredPassword);
+            if (otpMode) {
+                if (enteredPassword.length() == 6) {
+                    authManager.submitOtp(enteredPassword);
+                } else {
+                    lcd.clear();
+                    lcd.setCursor(0, 0); lcd.print("OTP PHAI 6 SO");
+                    isShowingMessage = true;
+                    lcdMessageTime = currentTime;
+                }
+            } else {
+                authManager.submitPassword(enteredPassword);
+            }
             enteredPassword = ""; 
+            otpMode = false;
         }
     } else { // Các phím số
         if (enteredPassword.length() < 16) { 

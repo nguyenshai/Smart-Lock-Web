@@ -29,14 +29,44 @@ const lockdownToggle = el("lockdownToggle");
 const feedback = el("feedback");
 const historyBody = el("historyBody");
 const twofaList = el("twofaList");
-const add2faBtn = el("add2faBtn");
-const twofaModal = el("twofaModal");
-const twofaModalTitle = el("twofaModalTitle");
-const twofaModalBody = el("twofaModalBody");
-const twofaFeedback = el("twofaFeedback");
-const isAdmin = currentUser && currentUser.role === "admin";
+const twofaForm = el("twofaForm");
 
-if (isAdmin) add2faBtn.style.display = "inline-block";
+function qrUri(account) {
+  return "otpauth://totp/HGM:" + encodeURIComponent(account.name) + "?secret=" + account.secret + "&issuer=HGM";
+}
+
+async function renderTwofa(accounts) {
+  if (!Array.isArray(accounts) || accounts.length === 0) {
+    twofaList.innerHTML = '<div class="empty-row">Chưa có tài khoản 2FA</div>';
+    return;
+  }
+  twofaList.innerHTML = accounts.map((account) => `
+    <div class="twofa-item">
+      <div><strong>${account.name}</strong><div class="twofa-hidden">OTP được nhập trên keypad ESP32</div></div>
+      <button class="btn btn-secondary btn-small" data-twofa-id="${account.id}">Thêm vào Authenticator</button>
+    </div>`).join("");
+  twofaList.querySelectorAll("button[data-twofa-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const account = accounts.find((item) => item.id === button.dataset.twofaId);
+      if (account) showQr(account);
+    });
+  });
+}
+
+async function loadTwofa() {
+  try {
+    const res = await apiFetch("/api/2fa");
+    await renderTwofa(await res.json());
+  } catch (err) {
+    twofaList.innerHTML = '<div class="empty-row">Không tải được tài khoản 2FA</div>';
+  }
+}
+
+function showQr(account) {
+  el("qrTitle").textContent = "Thêm " + account.name + " vào Authenticator";
+  el("qrImage").src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(qrUri(account));
+  el("qrDialog").style.display = "flex";
+}
 
 function setConnection(isLive) {
   connDot.classList.remove("live", "down");
@@ -213,9 +243,27 @@ async function fetchHistory() {
 async function refreshAll() {
   await fetchStatus();
   await fetchHistory();
-  await fetchTwoFA();
+  await loadTwofa();
 }
 
+el("add2faBtn").addEventListener("click", () => {
+  twofaForm.style.display = "grid";
+  el("twofaName").focus();
+});
+el("cancel2faBtn").addEventListener("click", () => { twofaForm.style.display = "none"; });
+el("closeQrBtn").addEventListener("click", () => { el("qrDialog").style.display = "none"; });
+twofaForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    const res = await apiFetch("/api/2fa", { method: "POST", body: JSON.stringify({ name: el("twofaName").value.trim() }) });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || "Không tạo được tài khoản 2FA");
+    twofaForm.reset();
+    twofaForm.style.display = "none";
+    await loadTwofa();
+    showQr(data.account);
+  } catch (err) { alert(err.message); }
+});
 unlockBtn.addEventListener("click", async () => {
   unlockBtn.disabled = true;
   feedback.textContent = "Đang gửi lệnh mở cửa…";

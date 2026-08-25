@@ -70,12 +70,18 @@
     <section class="card card-2fa">
       <div class="card-heading">
         <div class="card-label">2FA</div>
-        <button class="btn btn-primary btn-small" id="add2faBtn" style="display:none">+ Thêm tài khoản 2FA</button>
+        <button class="btn btn-primary btn-small" id="add2faBtn" type="button">+ Thêm 2FA</button>
       </div>
-      <div class="twofa-list" id="twofaList">
-        <div class="empty-row">Đang tải tài khoản 2FA…</div>
-      </div>
-      <div class="feedback" id="twofaFeedback"></div>
+      <form class="twofa-form" id="twofaForm" style="display:none">
+        <div class="field">
+          <label for="twofaName">Tên tài khoản</label>
+          <input id="twofaName" type="text" placeholder="VD: Điện thoại của tôi" required>
+        </div>
+        <button class="btn btn-primary btn-small" type="submit">Tạo tài khoản</button>
+        <button class="btn btn-secondary btn-small" id="cancel2faBtn" type="button">Hủy</button>
+      </form>
+      <div id="twofaList"><div class="empty-row">Chưa có tài khoản 2FA</div></div>
+      <div class="twofa-hint">Mở cửa bằng OTP: bấm phím D trên ESP32, nhập mã 6 số từ Authenticator rồi bấm #.</div>
     </section>
 
     <section class="card card-history">
@@ -93,11 +99,11 @@
   </main>
 </div>
 
-<div class="modal" id="twofaModal" hidden>
-  <div class="modal-panel">
-    <button class="modal-close" id="close2faModal" aria-label="Đóng">×</button>
-    <div class="card-label" id="twofaModalTitle">Tài khoản 2FA</div>
-    <div id="twofaModalBody"></div>
+<div class="qr-dialog" id="qrDialog" style="display:none">
+  <div class="qr-dialog-card">
+    <div class="card-label" id="qrTitle">Thêm vào Authenticator</div>
+    <img id="qrImage" alt="QR Code 2FA">
+    <button class="btn btn-secondary btn-small" id="closeQrBtn" type="button">Đóng</button>
   </div>
 </div>
 

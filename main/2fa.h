@@ -42,6 +42,12 @@ public:
         mqttPublishVerify("pin", password);
     }
 
+    void submitOtp(String otp) {
+        if (checkLockdown()) return;
+        showWaitScreen("OTP");
+        mqttPublishVerify("otp", otp);
+    }
+
     void submitRFID(String cardID) {
         if (checkLockdown()) return;
         showWaitScreen("RFID");
@@ -49,7 +55,7 @@ public:
     }
 
     void submitFingerprint(int fingerID) {
-        if (checkLockdown()) return;
+        // Trong chế độ khóa chết, fingerprint vẫn là phương thức được phép duy nhất.
         showWaitScreen("FINGERPRINT");
         mqttPublishVerify("fingerprint", String(fingerID));
     }
